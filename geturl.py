@@ -8,7 +8,6 @@ import pysolr
 from datetime import datetime
 from apscheduler.schedulers.blocking import BlockingScheduler
 import time
-import unittest
 import arrow
 from urlparse import urlparse
 
