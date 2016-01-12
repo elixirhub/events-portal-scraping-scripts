@@ -40,7 +40,7 @@ def logger():
     logger.addHandler(ch)
     logger.addHandler(fh)
 
-def init(url, schedule):
+def init(url, patternUrl,schedule):
     """
        Get the URL and start the widget
     """
@@ -49,11 +49,11 @@ def init(url, schedule):
     if schedule == True:
         scheduleUpdateSolr(url)
     else:
-        updateSolr(url)
+        updateSolr(url, patternUrl)
 
 
 
-def updateSolr(eventsPortalUrl):
+def updateSolr(eventsPortalUrl,patternUrl):
     """
        automatic update Solr index at 01:00 everyday.
        should be called by  scheduleUpdateSolr(url)
@@ -63,11 +63,11 @@ def updateSolr(eventsPortalUrl):
     try:
         deleteDataInSolr()
 
-        currentEventsUrls = getEventsUrls(eventsPortalUrl)
+        currentEventsUrls = getEventsUrls(eventsPortalUrl,patternUrl)
 
         paginationUrls = getPaginationUrls(currentEventsUrls)
 
-        allNextEventsUrls = getAllNextEventsUrls(paginationUrls)
+        allNextEventsUrls = getAllNextEventsUrls(paginationUrls,patternUrl)
 
         allEventsUrls = set(currentEventsUrls + allNextEventsUrls)
 
@@ -82,7 +82,7 @@ def updateSolr(eventsPortalUrl):
 
         logger.error('Can not update Solr')
 
-def getEventsUrls(eventsPortalUrl):
+def getEventsUrls(eventsPortalUrl,patternUrl):
     """
        scrape the link start with events/ with bs4 in html
        convert the path from relative to absolute
@@ -95,10 +95,21 @@ def getEventsUrls(eventsPortalUrl):
 
     parsedUrl = urlparse(eventsPortalUrl)
     baseUrl = '{uri.scheme}://{uri.netloc}/'.format(uri=parsedUrl)
+    pathUrl = urlparse(patternUrl).path
 
     # find all 'a'in html/
     soup = BeautifulSoup(html, "lxml")
-    links = soup.find_all('a')
+
+
+    if soup.find_all('a', href=re.compile(pathUrl)) != None:
+        links = soup.find_all('a', href=re.compile(pathUrl))
+        # start with http:"localhost/events" (patternUrl)
+    elif soup.find_all('a', href=re.compile(patternUrl)) != None:
+        links = soup.find_all('a', href=re.compile(patternUrl))
+    else:
+        # find all urls
+        links = soup.find_all('a')
+
 
     # find all urls in links and convert the path from relative to absolute
     results = []
@@ -130,15 +141,15 @@ def getPaginationUrls(currentEventsUrls):
 
     return nextPageUrlsResultsNew
 
-def getAllNextEventsUrls(paginationUrls):
+def getAllNextEventsUrls(paginationUrls, patternUrl):
     """
        get all next pages events urls base on looping the pagination urls
     """
 
     allNextEventsUrls = []
-    for one in paginationUrls:
+    for paginationUrl in paginationUrls:
 
-        nextPagesEventsUrls = getEventsUrls(one)
+        nextPagesEventsUrls = getEventsUrls(paginationUrl, patternUrl)
 
         allNextEventsUrls.append(nextPagesEventsUrls)
 
@@ -233,11 +244,6 @@ def scheduleUpdateSolr(url):
         #To shut down the scheduler
 
 
-# class TestStringMethods(unittest.TestCase):
-#
-#     def test_getEventData(eventsUrls):
-#         # eventsUrls.assertEqual('foo'.upper(), 'FOO')
-#         eventsUrls.assertEqual('foo'.upper(), 'FOO')
 
 
 init ("http://localhost/events/events-list?state=published&field_type_tid=All", "http://localhost/events", False)
