@@ -97,28 +97,35 @@ def getEventsUrls(eventsPortalUrl,patternUrl):
     baseUrl = '{uri.scheme}://{uri.netloc}/'.format(uri=parsedUrl)
     pathUrl = urlparse(patternUrl).path
 
-    # find all 'a'in html/
+    # find all links tag in html and get url,convert the path from relative to absolute
     soup = BeautifulSoup(html, "lxml")
 
+    results = []
 
+        #start with events/
     if soup.find_all('a', href=re.compile(pathUrl)) != None:
         links = soup.find_all('a', href=re.compile(pathUrl))
+        results = []
+        for row in links:
+            link = row.get('href')
+            linkNew =urljoin(baseUrl, link)
+            results.append(linkNew)
         # start with http:"localhost/events" (patternUrl)
     elif soup.find_all('a', href=re.compile(patternUrl)) != None:
         links = soup.find_all('a', href=re.compile(patternUrl))
+        for row in links:
+            link = row.get('href')
+            results.append(link)
     else:
         # find all urls
         links = soup.find_all('a')
+        for row in links:
+            link = row.get('href')
+            linkNew =urljoin(baseUrl, link)
+            results.append(linkNew)
 
 
-    # find all urls in links and convert the path from relative to absolute
-    results = []
-    for row in links:
-        link = row.get('href')
-        linkNew =urljoin(baseUrl, link)
-        results.append(linkNew)
-
-    # removing duplicates from results lists and return to resultsNew list
+     # removing duplicates from results lists and return to resultsNew list
     resultsNew = list(set(results))
     return resultsNew
 
@@ -196,7 +203,7 @@ def getEventData(allEventsUrls):
                 field["scientifictype"] =scientificType.text
                 field["url"] = url.text
                 field["description"] = description.text
-                field["location"]= location.text
+                field["location"] = location.text
                 fields.append(field.copy())
 
     return fields
