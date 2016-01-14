@@ -253,7 +253,7 @@ def scheduleUpdateSolr(url):
 
 
 
-init ("http://localhost/events/events-list?state=published&field_type_tid=All", "http://localhost/events", False)
+init ("http://localhost/ep/events?state=published&field_type_tid=All", "http://localhost/ep/events", False)
 
 
 
