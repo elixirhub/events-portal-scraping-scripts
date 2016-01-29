@@ -10,6 +10,7 @@ from apscheduler.schedulers.blocking import BlockingScheduler
 import time
 import arrow
 from urlparse import urlparse
+import urllib
 
 
 def logger():
@@ -40,20 +41,20 @@ def logger():
     logger.addHandler(ch)
     logger.addHandler(fh)
 
-def init(url, patternUrl,schedule):
+def init(sourceUrl, patternUrl,schedule):
     """
        Get the URL and start the widget
     """
     logger()
     logger.info('Connecting to the URL of the Events portal')
     if schedule == True:
-        scheduleUpdateSolr(url)
+        scheduleUpdateSolr(sourceUrl)
     else:
-        updateSolr(url, patternUrl)
+        updateSolr(sourceUrl, patternUrl)
 
 
 
-def updateSolr(eventsPortalUrl,patternUrl):
+def updateSolr(sourceUrl,patternUrl):
     """
        automatic update Solr index at 01:00 everyday.
        should be called by  scheduleUpdateSolr(url)
@@ -61,19 +62,19 @@ def updateSolr(eventsPortalUrl,patternUrl):
 
     # logger.debug(test)
     try:
-        deleteDataInSolr()
+        deleteDataInSolr(sourceUrl)
 
-        currentEventsUrls = getEventsUrls(eventsPortalUrl,patternUrl)
+        # currentEventsUrls = getEventsUrls(sourceUrl,patternUrl)
 
-        paginationUrls = getPaginationUrls(currentEventsUrls)
+        # paginationUrls = getPaginationUrls(currentEventsUrls)
 
-        allNextEventsUrls = getAllNextEventsUrls(paginationUrls,patternUrl)
+        # allNextEventsUrls = getAllNextEventsUrls(paginationUrls,patternUrl)
 
-        allEventsUrls = set(currentEventsUrls + allNextEventsUrls)
+        # allEventsUrls = set(currentEventsUrls + allNextEventsUrls)
 
 
-        data = getEventData(allEventsUrls)
-        addDataToSolr(data)
+        # data = getEventData(allEventsUrls, sourceUrl)
+        # addDataToSolr(data)
 
 
         logger.info('***Finishing update***')
@@ -82,18 +83,18 @@ def updateSolr(eventsPortalUrl,patternUrl):
 
         logger.error('Can not update Solr')
 
-def getEventsUrls(eventsPortalUrl,patternUrl):
+def getEventsUrls(sourceUrl,patternUrl):
     """
        scrape the link start with events/ with bs4 in html
        convert the path from relative to absolute
     """
-    root = urllib2.urlopen(eventsPortalUrl)
+    root = urllib2.urlopen(sourceUrl)
     html = root.read()
 
     # extract thr base url form the events portal url
     # get base URL from input string. Use regular expression
 
-    parsedUrl = urlparse(eventsPortalUrl)
+    parsedUrl = urlparse(sourceUrl)
     baseUrl = '{uri.scheme}://{uri.netloc}/'.format(uri=parsedUrl)
     pathUrl = urlparse(patternUrl).path
 
@@ -169,7 +170,7 @@ def getAllNextEventsUrls(paginationUrls, patternUrl):
 
     return  mergedNew
 
-def getEventData(allEventsUrls):
+def getEventData(allEventsUrls,sourceUrl):
     """
        Get the URL and start the widget
     """
@@ -204,6 +205,7 @@ def getEventData(allEventsUrls):
                 field["url"] = url.text
                 field["description"] = description.text
                 field["location"] = location.text
+                field["source"]= sourceUrl
                 fields.append(field.copy())
 
     return fields
@@ -220,17 +222,22 @@ def addDataToSolr(fields):
         fields
             )
 
-def deleteDataInSolr():
+def deleteDataInSolr(sourceUrl):
     """
       delete all the previous index in Solr
     """
+
     logger.info('Deleting the data in solr')
     try:
         solrUrl = 'http://localhost:8983/solr/event_portal'
+        # encode the sourceUrl
+        sourceUrlNew = urllib.quote_plus(sourceUrl)
         solr = pysolr.Solr(solrUrl, timeout=10)
-        solr.delete(q='*:*')
+        # solr.delete(q='source:sourceUrlNew')
+        solr.delete(q='source: %s' % sourceUrlNew)
+
     except:
-        logger.error('Error:Cannot delete data in solr' + solrUrl)
+        logger.error('Error:Cannot delete data in solr ' + solrUrl)
 
 def scheduleUpdateSolr(url):
     """
