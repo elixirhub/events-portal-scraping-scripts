@@ -246,22 +246,13 @@ def deleteDataInSolrFromUrl(sourceUrl):
     try:
         # encode the sourceUrl
         # sourceUrlNew = urllib.quote_plus(sourceUrl)
+        if re.search('[? &]',sourceUrl):
+            splitUrl= re.split('[? &]', sourceUrl)
+            sourceUrlSplit = '"%s"' %splitUrl[0]+" "+"AND" +" "+'"%s"' %splitUrl[1]+" " +"AND" +" "+ '"%s"' %splitUrl[2]
+        else:
+            sourceUrlSplit ='"%s"' % sourceUrl
 
-
-        for character in sourceUrl:
-            if character == "?" or character =="&":
-                urlOne = sourceUrl.split("?")
-                urlTwo = urlOne[1].split("&")
-
-                sourceUrlNew = '"%s"' %urlOne[0]+" "+"AND" +" "+'"%s"' %urlTwo[0]+" " +"AND" +" "+ '"%s"' %urlTwo[1]
-
-
-            else:
-                sourceUrlNew = '"%s"' % sourceUrl
-
-
-        query = 'source:(%s)' %sourceUrl
-
+        query = 'source:(%s)' %sourceUrlSplit
         deleteDataInSolrByQuery(query)
     except:
         logger.error('Error:Cannot delete data in solr ')
