@@ -5,12 +5,11 @@ from urlparse import urljoin
 import re
 import logging
 import pysolr
-from datetime import datetime
 from apscheduler.schedulers.blocking import BlockingScheduler
 import time
-import arrow
 from urlparse import urlparse
 import urllib
+
 
 
 def logger():
@@ -41,47 +40,40 @@ def logger():
     logger.addHandler(ch)
     logger.addHandler(fh)
 
-def init(sourceUrl, patternUrl,schedule):
+# def init(sourceUrl, patternUrl,schedule):
+def init():
     """
        Get the URL and start the widget
     """
     logger()
     logger.info('Connecting to the URL of the Events portal')
-    if schedule == True:
-        scheduleUpdateSolr(sourceUrl)
-    else:
-        updateSolr(sourceUrl, patternUrl)
+    # if schedule == True:
+    #     scheduleUpdateSolr(sourceUrl)
+    # else:
+    #     updateSolr(sourceUrl, patternUrl)
 
-
+def addDataToSolrFromUrl(sourceUrl,patternUrl):
+    """
+    add data to a Solr index crawling events from a URL
+    """
+    try:
+        currentEventsUrls = getEventsUrls(sourceUrl,patternUrl)
+        paginationUrls = getPaginationUrls(currentEventsUrls)
+        allNextEventsUrls = getAllNextEventsUrls(paginationUrls,patternUrl)
+        allEventsUrls = set(currentEventsUrls + allNextEventsUrls)
+        data = getEventData(allEventsUrls, sourceUrl)
+        addDataToSolr(data)
+    except Exception as e:
+        logger.error('Can not update Solr')
 
 def updateSolr(sourceUrl,patternUrl):
     """
-       automatic update Solr index at 01:00 everyday.
-       should be called by  scheduleUpdateSolr(url)
+       Deletes data from a source URL and updates with new content
     """
+    deleteDataInSolrFromUrl(sourceUrl)
+    addDataToSolrFromUrl(sourceUrl,patternUrl)
+    logger.info('***Finishing update***')
 
-    # logger.debug(test)
-    try:
-        deleteDataInSolr(sourceUrl)
-
-        # currentEventsUrls = getEventsUrls(sourceUrl,patternUrl)
-
-        # paginationUrls = getPaginationUrls(currentEventsUrls)
-
-        # allNextEventsUrls = getAllNextEventsUrls(paginationUrls,patternUrl)
-
-        # allEventsUrls = set(currentEventsUrls + allNextEventsUrls)
-
-
-        # data = getEventData(allEventsUrls, sourceUrl)
-        # addDataToSolr(data)
-
-
-        logger.info('***Finishing update***')
-
-    except Exception as e:
-
-        logger.error('Can not update Solr')
 
 def getEventsUrls(sourceUrl,patternUrl):
     """
@@ -185,24 +177,25 @@ def getEventData(allEventsUrls,sourceUrl):
         if len(schema) != 0:
             for property in schema:
                 title = soup.find(property="schema:name")
-                startDate = soup.find('span', {'property': 'schema:startDate'})
-                enDate = soup.find('span', {'property': 'schema:enDate'})
-                type = soup.find(rel="schema:type")
-                scientificType = soup.find(rel="schema:scientificType")
+                # startDate = soup.find('span', {'property': 'schema:startDate'})
+                # enDate = soup.find('span', {'property': 'schema:enDate'})
+                # type = soup.find(rel="schema:type")
+                # scientificType = soup.find(rel="schema:scientificType")
                 description = soup.find(property="schema:description")
-                url = soup.find( property="schema:url")
+                # url = soup.find( property="schema:url")
                 id = soup.find(property="schema:id")
                 location = soup.find(property="schema:location")
 
                 field = {}
                 field["nid"] = id.text
+
                 field["title"] = title['content']
-                field["startdate"] = arrow.get(startDate['content']).datetime.replace(tzinfo=None)
-                if enDate != None:
-                  field["endate"] = arrow.get(enDate['content']).datetime.replace(tzinfo=None)
-                field["type"] = type.text
-                field["scientifictype"] =scientificType.text
-                field["url"] = url.text
+                # field["startdate"] = arrow.get(startDate['content']).datetime.replace(tzinfo=None)
+                # if enDate != None:
+                #   field["endate"] = arrow.get(enDate['content']).datetime.replace(tzinfo=None)
+                # field["type"] = type.text
+                # field["scientifictype"] =scientificType.text
+                # field["url"] = url.text
                 field["description"] = description.text
                 field["location"] = location.text
                 field["source"]= sourceUrl
@@ -211,33 +204,67 @@ def getEventData(allEventsUrls,sourceUrl):
     return fields
 
 
-def addDataToSolr(fields):
+def addDataToSolr(docs):
     """
-        Setup a Solr instance. The timeout is optional.
-        Index data to solr by solr.add function in pysolr
+    Adds data to a SOLR from a SOLR data structure (documents)
     """
     solrUrl = 'http://localhost:8983/solr/event_portal'
     solr = pysolr.Solr(solrUrl, timeout=10)
     solr.add(
-        fields
+        docs
             )
 
-def deleteDataInSolr(sourceUrl):
+def deleteDataInSolr():
     """
-      delete all the previous index in Solr
+    delete all the Solr data
     """
-
-    logger.info('Deleting the data in solr')
+    logger.info('Deleting ALL data in SOLR')
     try:
         solrUrl = 'http://localhost:8983/solr/event_portal'
-        # encode the sourceUrl
-        sourceUrlNew = urllib.quote_plus(sourceUrl)
         solr = pysolr.Solr(solrUrl, timeout=10)
-        # solr.delete(q='source:sourceUrlNew')
-        solr.delete(q='source: %s' % sourceUrlNew)
-
+        query = '*:*'
+        solr.delete(q='%s' % query)
+        logger.info('deleting sourceUrl objects from solr index: "%s"', query)
     except:
         logger.error('Error:Cannot delete data in solr ' + solrUrl)
+
+def deleteDataInSolrByQuery(query):
+    """
+      delete all the SOLR data using a LUCENE query
+    """
+    solrUrl = 'http://localhost:8983/solr/event_portal'
+    solr = pysolr.Solr(solrUrl, timeout=10)
+    solr.delete(q='%s' % query)
+    logger.info('deleting sourceUrl objects from solr index: "%s"', query)
+
+
+def deleteDataInSolrFromUrl(sourceUrl):
+    """
+      delete all the SOLR data equal to sourceUrl
+    """
+    logger.info('Deleting data in SOLR by sourceUrl')
+    try:
+        # encode the sourceUrl
+        # sourceUrlNew = urllib.quote_plus(sourceUrl)
+
+
+        for character in sourceUrl:
+            if character == "?" or character =="&":
+                urlOne = sourceUrl.split("?")
+                urlTwo = urlOne[1].split("&")
+
+                sourceUrlNew = '"%s"' %urlOne[0]+" "+"AND" +" "+'"%s"' %urlTwo[0]+" " +"AND" +" "+ '"%s"' %urlTwo[1]
+
+
+            else:
+                sourceUrlNew = '"%s"' % sourceUrl
+
+
+        query = 'source:(%s)' %sourceUrl
+
+        deleteDataInSolrByQuery(query)
+    except:
+        logger.error('Error:Cannot delete data in solr ')
 
 def scheduleUpdateSolr(url):
     """
@@ -258,10 +285,10 @@ def scheduleUpdateSolr(url):
         #To shut down the scheduler
 
 
+init()
 
-
-init ("http://localhost/ep/events?state=published&field_type_tid=All", "http://localhost/ep/events", False)
-
+# init("http://localhost/ep/events?state=published&field_type_tid=All", "http://localhost/ep/events", False)
+# init("http://www.elixir-europe.org:8080/events", "http://www.elixir-europe.org:8080/events", False)
 
 
 
