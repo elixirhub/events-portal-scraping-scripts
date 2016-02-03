@@ -84,7 +84,7 @@ def getEventsUrls(sourceUrl,patternUrl):
     root = urllib2.urlopen(sourceUrl)
     html = root.read()
 
-    # extract thr base url form the events portal url
+    # extract the base url form the events portal url
     # get base URL from input string. Use regular expression
 
     parsedUrl = urlparse(sourceUrl)
@@ -117,8 +117,6 @@ def getEventsUrls(sourceUrl,patternUrl):
             link = row.get('href')
             linkNew =urljoin(baseUrl, link)
             results.append(linkNew)
-
-
      # removing duplicates from results lists and return to resultsNew list
     resultsNew = list(set(results))
     return resultsNew
@@ -176,31 +174,30 @@ def getEventData(allEventsUrls,sourceUrl):
         schema = soup.find_all(typeof="schema:Event sioc:Item foaf:Document")
         # filter the link by typeof ="schema:Event"
         if len(schema) != 0:
-            for property in schema:
-                title = soup.find(property="schema:name")
-                # startDate = soup.find('span', {'property': 'schema:startDate'})
-                # enDate = soup.find('span', {'property': 'schema:enDate'})
-                # type = soup.find(rel="schema:type")
-                # scientificType = soup.find(rel="schema:scientificType")
-                description = soup.find(property="schema:description")
-                # url = soup.find( property="schema:url")
-                id = soup.find(property="schema:id")
-                location = soup.find(property="schema:location")
+            title = soup.find(property="schema:name")
+            # startDate = soup.find('span', {'property': 'schema:startDate'})
+            # enDate = soup.find('span', {'property': 'schema:enDate'})
+            # type = soup.find(rel="schema:type")
+            # scientificType = soup.find(rel="schema:scientificType")
+            description = soup.find(property="schema:description")
+            # url = soup.find( property="schema:url")
+            id = soup.find(property="schema:id")
+            location = soup.find(property="schema:location")
 
-                field = {}
-                field["nid"] = id.text
+            field = {}
+            field["nid"] = id.text
 
-                field["title"] = title['content']
-                # field["startdate"] = arrow.get(startDate['content']).datetime.replace(tzinfo=None)
-                # if enDate != None:
-                #   field["endate"] = arrow.get(enDate['content']).datetime.replace(tzinfo=None)
-                # field["type"] = type.text
-                # field["scientifictype"] =scientificType.text
-                # field["url"] = url.text
-                field["description"] = description.text
-                field["location"] = location.text
-                field["source"]= sourceUrl
-                fields.append(field.copy())
+            field["title"] = title['content']
+            # field["startdate"] = arrow.get(startDate['content']).datetime.replace(tzinfo=None)
+            # if enDate != None:
+            #   field["endate"] = arrow.get(enDate['content']).datetime.replace(tzinfo=None)
+            # field["type"] = type.text
+            # field["scientifictype"] =scientificType.text
+            # field["url"] = url.text
+            field["description"] = description.text
+            field["location"] = location.text
+            field["source"]= sourceUrl
+            fields.append(field.copy())
 
     return fields
 
@@ -245,14 +242,13 @@ def deleteDataInSolrFromUrl(sourceUrl):
     """
     logger.info('Deleting data in SOLR by sourceUrl')
     try:
-        # encode the sourceUrl
-        # sourceUrlNew = urllib.quote_plus(sourceUrl)
-        if re.search('[? &]',sourceUrl):
-            splitUrl= re.split('[? &]', sourceUrl)
-            sourceUrlSplit = '"%s"' % splitUrl[0]+" "+"AND" + " " + '"%s"' % splitUrl[1]+" " + "AND" + " " + '"%s"' % splitUrl[2]
-        else:
-            sourceUrlSplit = '"%s"' % sourceUrl
-
+        splitUrl= re.split('[? &]', sourceUrl)
+        sourceUrlSplit = ''
+        _and = ' AND '
+        for urlPart in splitUrl:
+            sourceUrlSplit += '"' + urlPart + '"'
+            sourceUrlSplit += _and
+        sourceUrlSplit = sourceUrlSplit[:-len(_and)]
         query = 'source:(%s)' %sourceUrlSplit
         deleteDataInSolrByQuery(query)
     except:
