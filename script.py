@@ -56,10 +56,11 @@ def addDataToSolrFromUrl(sourceUrl,patternUrl):
     """
     add data to a Solr index crawling events from a URL
     """
+    logger.info('Add data to a Solr index crawling events from a URl "%s"', sourceUrl)
     try:
-        currentEventsUrls = getEventsUrls(sourceUrl,patternUrl)
+        currentEventsUrls = getEventsUrls(sourceUrl, patternUrl)
         paginationUrls = getPaginationUrls(currentEventsUrls)
-        allNextEventsUrls = getAllNextEventsUrls(paginationUrls,patternUrl)
+        allNextEventsUrls = getAllNextEventsUrls(paginationUrls, patternUrl)
         allEventsUrls = set(currentEventsUrls + allNextEventsUrls)
         data = getEventData(allEventsUrls, sourceUrl)
         addDataToSolr(data)
@@ -248,9 +249,9 @@ def deleteDataInSolrFromUrl(sourceUrl):
         # sourceUrlNew = urllib.quote_plus(sourceUrl)
         if re.search('[? &]',sourceUrl):
             splitUrl= re.split('[? &]', sourceUrl)
-            sourceUrlSplit = '"%s"' %splitUrl[0]+" "+"AND" +" "+'"%s"' %splitUrl[1]+" " +"AND" +" "+ '"%s"' %splitUrl[2]
+            sourceUrlSplit = '"%s"' % splitUrl[0]+" "+"AND" + " " + '"%s"' % splitUrl[1]+" " + "AND" + " " + '"%s"' % splitUrl[2]
         else:
-            sourceUrlSplit ='"%s"' % sourceUrl
+            sourceUrlSplit = '"%s"' % sourceUrl
 
         query = 'source:(%s)' %sourceUrlSplit
         deleteDataInSolrByQuery(query)
