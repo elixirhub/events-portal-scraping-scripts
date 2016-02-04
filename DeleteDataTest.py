@@ -1,3 +1,3 @@
 __author__ = 'chuqiao'
-import script
-script.deleteDataInSolr()
+import EventsPortal
+EventsPortal.deleteDataInSolr()
