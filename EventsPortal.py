@@ -67,6 +67,24 @@ def addDataToSolrFromUrl(sourceUrl,patternUrl):
     except Exception as e:
         logger.error('Can not update Solr')
 
+def getAllEventsData(sourceUrl,patternUrl):
+    """
+    get all events data crawling from a URL
+    """
+    logger.info('crawling events from a URl "%s"', sourceUrl)
+    try:
+        currentEventsUrls = getEventsUrls(sourceUrl, patternUrl)
+        paginationUrls = getPaginationUrls(currentEventsUrls)
+        allNextEventsUrls = getAllNextEventsUrls(paginationUrls, patternUrl)
+        allEventsUrls = set(currentEventsUrls + allNextEventsUrls)
+        data = getEventData(allEventsUrls, sourceUrl)
+
+    except Exception as e:
+        logger.error('Can not crawling')
+
+    return data
+
+
 def updateSolr(sourceUrl,patternUrl):
     """
        Deletes data from a source URL and updates with new content
@@ -182,7 +200,14 @@ def getEventData(allEventsUrls,sourceUrl):
             description = soup.find(property="schema:description")
             # url = soup.find( property="schema:url")
             id = soup.find(property="schema:id")
-            location = soup.find(property="schema:location")
+
+
+            locationName = soup.find('span', {'itemprop' : 'name'})
+            locationStreet = soup.find('span', {'itemprop' : 'streetAddress'})
+            locationCity = soup.find('span',  {'itemprop': 'addressLocality'})
+            locationCountry = soup.find(itemprop= "addressCountry")
+            locationPostCode = soup.find('span', {'itemprop': 'postalCode'})
+            # locationStreet = soup.find(itemprop="streetAddress")
 
             field = {}
             field["nid"] = id.text
@@ -195,7 +220,17 @@ def getEventData(allEventsUrls,sourceUrl):
             # field["scientifictype"] =scientificType.text
             # field["url"] = url.text
             field["description"] = description.text
-            field["location"] = location.text
+
+
+            if locationName != None:
+               field["location_name"] = locationName.text
+            if locationStreet != None:
+               field["location_street"] = locationStreet.text
+            field["location_city"] = locationCity.text
+            field["location_country"] = locationCountry.text
+            if locationPostCode != None:
+               field["location_postcode"] = locationPostCode.text
+
             field["source"]= sourceUrl
             fields.append(field.copy())
 
@@ -206,7 +241,7 @@ def addDataToSolr(docs):
     """
     Adds data to a SOLR from a SOLR data structure (documents)
     """
-    solrUrl = 'http://localhost:8983/solr/event_portal'
+    solrUrl = 'http://localhost:8984/solr/event_portal'
     solr = pysolr.Solr(solrUrl, timeout=10)
     solr.add(
         docs
@@ -218,7 +253,7 @@ def deleteDataInSolr():
     """
     logger.info('Deleting ALL data in SOLR')
     try:
-        solrUrl = 'http://localhost:8983/solr/event_portal'
+        solrUrl = 'http://localhost:8984/solr/event_portal'
         solr = pysolr.Solr(solrUrl, timeout=10)
         query = '*:*'
         solr.delete(q='%s' % query)
@@ -230,7 +265,7 @@ def deleteDataInSolrByQuery(query):
     """
       delete all the SOLR data using a LUCENE query
     """
-    solrUrl = 'http://localhost:8983/solr/event_portal'
+    solrUrl = 'http://localhost:8984/solr/event_portal'
     solr = pysolr.Solr(solrUrl, timeout=10)
     solr.delete(q='%s' % query)
     logger.info('deleting sourceUrl objects from solr index: "%s"', query)
