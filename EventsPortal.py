@@ -9,6 +9,7 @@ from apscheduler.schedulers.blocking import BlockingScheduler
 import time
 from urlparse import urlparse
 import urllib
+import arrow
 
 
 
@@ -193,13 +194,16 @@ def getEventData(allEventsUrls,sourceUrl):
         # filter the link by typeof ="schema:Event"
         if len(schema) != 0:
             title = soup.find(property="schema:name")
-            # startDate = soup.find('span', {'property': 'schema:startDate'})
-            # enDate = soup.find('span', {'property': 'schema:enDate'})
-            # type = soup.find(rel="schema:type")
-            # scientificType = soup.find(rel="schema:scientificType")
+            startDate = soup.find('span', {'property': 'schema:startDate'})
+            enDate = soup.find('span', {'property': 'schema:enDate'})
+            type = soup.find(rel="schema:type")
+            scientificType = soup.find(rel="schema:scientificType")
             description = soup.find(property="schema:description")
-            # url = soup.find( property="schema:url")
+            url = soup.find( property="schema:url")
             id = soup.find(property="schema:id")
+            keywords = soup.find(rel="schema:keywords")
+            subtitle = soup.find(property="schema:alternateName")
+
 
 
             locationName = soup.find('span', {'itemprop' : 'name'})
@@ -213,13 +217,20 @@ def getEventData(allEventsUrls,sourceUrl):
             field["nid"] = id.text
 
             field["title"] = title['content']
-            # field["startdate"] = arrow.get(startDate['content']).datetime.replace(tzinfo=None)
-            # if enDate != None:
-            #   field["endate"] = arrow.get(enDate['content']).datetime.replace(tzinfo=None)
-            # field["type"] = type.text
-            # field["scientifictype"] =scientificType.text
-            # field["url"] = url.text
-            field["description"] = description.text
+            field["startdate"] = arrow.get(startDate['content']).datetime.replace(tzinfo=None)
+            if enDate != None:
+              field["endate"] = arrow.get(enDate['content']).datetime.replace(tzinfo=None)
+            if type != None:
+             field["type"] = type.text
+            if scientificType != None:
+             field["scientifictype"] =scientificType.text
+            field["url"] = url.text
+            if description !=None:
+             field["description"] = description.text
+            if keywords != None:
+             field["keywords"] = keywords.text
+            if subtitle != None:
+              field["subtitle"] = subtitle.txt
 
 
             if locationName != None:
