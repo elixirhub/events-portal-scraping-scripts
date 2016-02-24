@@ -41,17 +41,13 @@ def logger():
     logger.addHandler(ch)
     logger.addHandler(fh)
 
-# def init(sourceUrl, patternUrl,schedule):
+
 def init():
     """
        Get the URL and start the widget
     """
     logger()
     logger.info('Connecting to the URL of the Events portal')
-    # if schedule == True:
-    #     scheduleUpdateSolr(sourceUrl)
-    # else:
-    #     updateSolr(sourceUrl, patternUrl)
 
 def addDataToSolrFromUrl(sourceUrl,patternUrl):
     """
@@ -182,7 +178,7 @@ def getAllNextEventsUrls(paginationUrls, patternUrl):
 
 def getEventData(allEventsUrls,sourceUrl):
     """
-       Get the URL and start the widget
+       Get the URL and crawling data from url
     """
     fields = []
     for eventUrl in allEventsUrls:
@@ -195,14 +191,17 @@ def getEventData(allEventsUrls,sourceUrl):
         if len(schema) != 0:
             title = soup.find(property="schema:name")
             startDate = soup.find('span', {'property': 'schema:startDate'})
-            enDate = soup.find('span', {'property': 'schema:enDate'})
-            type = soup.find(rel="schema:type")
+            endDate = soup.find('span', {'property': 'schema:enDate'})
+            eventType = soup.find(rel="schema:type")
             scientificType = soup.find(rel="schema:scientificType")
             description = soup.find(property="schema:description")
             url = soup.find( property="schema:url")
             id = soup.find(property="schema:id")
             keywords = soup.find(rel="schema:keywords")
             subtitle = soup.find(property="schema:alternateName")
+            hostInstitution = soup.find(rel="schema:organization")
+            contactName = soup.find(property="schema:contactName")
+            contactEmail = soup.find(property="schema:email")
 
 
 
@@ -210,37 +209,43 @@ def getEventData(allEventsUrls,sourceUrl):
             locationStreet = soup.find('span', {'itemprop' : 'streetAddress'})
             locationCity = soup.find('span',  {'itemprop': 'addressLocality'})
             locationCountry = soup.find(itemprop= "addressCountry")
-            locationPostCode = soup.find('span', {'itemprop': 'postalCode'})
+            locationPostcode = soup.find('span', {'itemprop': 'postalCode'})
             # locationStreet = soup.find(itemprop="streetAddress")
 
             field = {}
-            field["nid"] = id.text
-
-            field["title"] = title['content']
-            field["startdate"] = arrow.get(startDate['content']).datetime.replace(tzinfo=None)
-            if enDate != None:
-              field["endate"] = arrow.get(enDate['content']).datetime.replace(tzinfo=None)
-            if type != None:
-             field["type"] = type.text
+            field["eventId"] = id.text
+            field["name"] = title['content']
+            field["startDate"] = arrow.get(startDate['content']).datetime.replace(tzinfo=None)
+            if endDate != None:
+              field["endDate"] = arrow.get(endDate['content']).datetime.replace(tzinfo=None)
+            if eventType != None:
+             field["eventType"] = eventType.text
             if scientificType != None:
-             field["scientifictype"] =scientificType.text
+             field["topic"] =scientificType.text
             field["url"] = url.text
-            if description !=None:
+            if description != None:
              field["description"] = description.text
             if keywords != None:
              field["keywords"] = keywords.text
             if subtitle != None:
-              field["subtitle"] = subtitle.txt
+              field["alternateName"] = subtitle.text
+            if hostInstitution != None:
+                field["hostInstitution"] = hostInstitution.text
+            if contactName != None:
+                field["contactName"]= contactName.text
+            if contactEmail != None:
+                field["contactEmail"] = contactEmail.text
 
 
             if locationName != None:
-               field["location_name"] = locationName.text
+               field["locationName"] = locationName.text
             if locationStreet != None:
-               field["location_street"] = locationStreet.text
-            field["location_city"] = locationCity.text
-            field["location_country"] = locationCountry.text
-            if locationPostCode != None:
-               field["location_postcode"] = locationPostCode.text
+               field["locationStreet"] = locationStreet.text
+            field["locationCity"] = locationCity.text
+            field["locationCountry"] = locationCountry.text
+            if locationPostcode != None:
+               field["locationPostcode"] = locationPostcode.text
+
 
             field["source"]= sourceUrl
             fields.append(field.copy())
@@ -300,29 +305,25 @@ def deleteDataInSolrFromUrl(sourceUrl):
     except:
         logger.error('Error:Cannot delete data in solr ')
 
-def scheduleUpdateSolr(url):
-    """
-       Schedule the updataSolr() function to make it running every on hour.
-    """
-    logger.info('***Starting update every minute***')
-    sched = BlockingScheduler()
-    sched.add_job(updateSolr, 'interval', minutes=1, args=[url])
-    sched.start()
-    try:
-        # Keeps the main thread alive.
-        while True:
-            time.sleep(2)
-    except (KeyboardInterrupt, SystemExit):
-        pass
-        # logger.info('Stopping update')
-        # sched.shutdown()
-        #To shut down the scheduler
-
+# def scheduleUpdateSolr(url):
+#     """
+#        Schedule the updataSolr() function to make it running every on hour.
+#     """
+#     logger.info('***Starting update every minute***')
+#     sched = BlockingScheduler()
+#     sched.add_job(updateSolr, 'interval', minutes=1, args=[url])
+#     sched.start()
+#     try:
+#         # Keeps the main thread alive.
+#         while True:
+#             time.sleep(2)
+#     except (KeyboardInterrupt, SystemExit):
+#         pass
+#         # logger.info('Stopping update')
+#         # sched.shutdown()
+#         #To shut down the scheduler
 
 init()
-
-# init("http://localhost/ep/events?state=published&field_type_tid=All", "http://localhost/ep/events", False)
-# init("http://www.elixir-europe.org:8080/events", "http://www.elixir-europe.org:8080/events", False)
 
 
 
