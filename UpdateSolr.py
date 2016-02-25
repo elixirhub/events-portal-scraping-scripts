@@ -6,13 +6,15 @@ logging.basicConfig()
 import SyncSolr
 
 
+
+
 def scheduleUpdateSolr(csvUrl):
     """
 
     """
     # logger.info('***Starting update every minute***')
     sched = BlockingScheduler()
-    sched.add_job(SyncSolr.syncSolr, 'interval', seconds= 20, args=[csvUrl])
+    sched.add_job(SyncSolr.syncSolr, 'interval', seconds= 10, args=[csvUrl])
     sched.start()
     try:
         # Keeps the main thread alive.
@@ -23,8 +25,7 @@ def scheduleUpdateSolr(csvUrl):
         pass
 
 
-scheduleUpdateSolr("http://localhost:8984/solr/event_portal/select?q=*:*&fl=eventId,name,alternateName,startDate,endDate,description,eventType,keywords,topic,locationName,locationCity,locationCountry,locationPostcode,url,&rows=2147483647&wt=csv""http://localhost:8984/solr/event_portal/select?q=*:*&fl=eventId,name,alternateName,startDate,description,eventType,keywords,topic,locationName,locationCity,locationCountry,locationPostcode,url,&rows=2147483647&wt=csv")
+scheduleUpdateSolr("http://localhost:8984/solr/event_portal/select?q=*:*&fl=eventId,name,alternateName,startDate,endDate,description,eventType,keywords,topic,locationName,locationCity,locationCountry,locationPostcode,url,&rows=2147483647&wt=csv")
 
 
 
-# init("http://localhost:8984/solr/event_portal/select?q=*:*&fl=eventId,name,alternateName,startDate,endDate,description,eventType,keywords,topic,locationName,locationCity,locationCountry,locationPostcode,url,&rows=2147483647&wt=csv""http://localhost:8984/solr/event_portal/select?q=*:*&fl=eventId,name,alternateName,startDate,endDate,description,eventType,keywords,topic,locationName,locationCity,locationCountry,locationPostcode,url,&rows=2147483647&wt=csv")
