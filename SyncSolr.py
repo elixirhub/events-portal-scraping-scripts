@@ -69,7 +69,7 @@ def getDataFromCsv(csvUrl):
               'category', 'keyword', 'field', 'venue', 'city', 'country', 'postcode',
               'link']
     data = []
-    for i, row in enumerate(csvReader):
+    for row in csvReader:
 
            drow = dict(zip(header, row))
 
