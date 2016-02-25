@@ -4,10 +4,6 @@ import csv
 import urllib2
 import pysolr
 import logging
-import datetime
-import logging
-# logging.basicConfig()
-from apscheduler.schedulers.blocking import BlockingScheduler
 
 def logger():
     """
@@ -46,6 +42,7 @@ def init(csvUrl):
 
 def syncSolr(csvUrl):
 
+    # logger.info('Starting crawling data')
     getDataFromCsv(csvUrl)
     docs = getDataFromCsv(csvUrl)
     deleteDataInSolr()
@@ -63,20 +60,15 @@ def getDataFromCsv(csvUrl):
     csvReader = csv.reader(response)
     # start from next remove the header
     csvReader.next()
-
     # create the new header
     header = ['id', 'title', 'subtitle', 'start', 'end', 'description',
               'category', 'keyword', 'field', 'venue', 'city', 'country', 'postcode',
               'link']
     data = []
-    for row in csvReader:
-
-           drow = dict(zip(header, row))
-
+    for column in csvReader:
+           drow = dict(zip(header, column))
            # remove the keys within the empty values
            drowRemoveEmptyValue = dict((k, v) for k, v in drow.iteritems() if v)
-
-           # print drowRemoveEmptyValue
            data.append(drowRemoveEmptyValue)
 
     return data
@@ -88,6 +80,8 @@ def deleteDataInSolr():
     solr = pysolr.Solr(solrUrl, timeout=10)
     query = '*:*'
     solr.delete(q='%s' % query)
+
+
 
 def pushToIannSolr(docs):
     """
@@ -101,24 +95,5 @@ def pushToIannSolr(docs):
 
 
 
-# def scheduleUpdateSolr(csvUrl):
-#     """
-#
-#     """
-#     # logger.info('***Starting update every minute***')
-#     sched = BlockingScheduler()
-#     sched.add_job(syncSolr, 'interval', seconds= 20, args=[csvUrl])
-#     sched.start()
-#     try:
-#         # Keeps the main thread alive.
-#         while True:
-#             time.sleep(20)
-#
-#     except (KeyboardInterrupt, SystemExit):
-#         pass
-
-
-# scheduleUpdateSolr("http://localhost:8984/solr/event_portal/select?q=*:*&fl=eventId,name,alternateName,startDate,endDate,description,eventType,keywords,topic,locationName,locationCity,locationCountry,locationPostcode,url,&rows=2147483647&wt=csv""http://localhost:8984/solr/event_portal/select?q=*:*&fl=eventId,name,alternateName,startDate,description,eventType,keywords,topic,locationName,locationCity,locationCountry,locationPostcode,url,&rows=2147483647&wt=csv")
 
 init("http://localhost:8984/solr/event_portal/select?q=*:*&fl=eventId,name,alternateName,startDate,endDate,description,eventType,keywords,topic,locationName,locationCity,locationCountry,locationPostcode,url,&rows=2147483647&wt=csv")
-# init()
