@@ -182,8 +182,11 @@ def getEventData(allEventsUrls,sourceUrl):
     """
     fields = []
     for eventUrl in allEventsUrls:
-        root = urllib2.urlopen(eventUrl)
-        html = root.read()
+        try:
+            root = urllib2.urlopen(eventUrl)
+            html = root.read()
+        except urllib2.HTTPError, error:
+            html = error.read()
 
         soup = BeautifulSoup(html,"lxml")
         schema = soup.find_all(typeof="schema:Event sioc:Item foaf:Document")
