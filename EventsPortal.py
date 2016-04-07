@@ -10,6 +10,7 @@ import time
 from urlparse import urlparse
 import urllib
 import arrow
+from httplib import BadStatusLine
 
 
 
@@ -187,6 +188,8 @@ def getEventData(allEventsUrls,sourceUrl):
             html = root.read()
         except urllib2.HTTPError, error:
             html = error.read()
+        except BadStatusLine:
+            print "could not fetch %s" % eventUrl
 
         soup = BeautifulSoup(html,"lxml")
         schema = soup.find_all(typeof="schema:Event sioc:Item foaf:Document")
@@ -260,7 +263,8 @@ def addDataToSolr(docs):
     """
     Adds data to a SOLR from a SOLR data structure (documents)
     """
-    solrUrl = 'http://localhost:8984/solr/event_portal'
+    # solrUrl = 'http://localhost:8984/solr/event_portal'
+    solrUrl = 'http://139.162.217.53:8983/solr/eventsportal'
     solr = pysolr.Solr(solrUrl, timeout=10)
     solr.add(
         docs
@@ -272,7 +276,8 @@ def deleteDataInSolr():
     """
     logger.info('Deleting ALL data in SOLR')
     try:
-        solrUrl = 'http://localhost:8984/solr/event_portal'
+        # solrUrl = 'http://localhost:8984/solr/event_portal'
+        solrUrl = 'http://139.162.217.53:8983/solr/eventsportal'
         solr = pysolr.Solr(solrUrl, timeout=10)
         query = '*:*'
         solr.delete(q='%s' % query)
