@@ -189,7 +189,7 @@ def getEventData(allEventsUrls,sourceUrl):
         except urllib2.HTTPError, error:
             html = error.read()
         except BadStatusLine:
-            print "could not fetch %s" % eventUrl
+            logger.info ("could not fetch %s" % eventUrl)
 
         soup = BeautifulSoup(html,"lxml")
         schema = soup.find_all(typeof="schema:Event sioc:Item foaf:Document")
