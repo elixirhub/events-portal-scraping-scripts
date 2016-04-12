@@ -47,7 +47,7 @@ def syncSolr(csvUrl,iannSolrUrl):
     docs = getDataFromCsv(csvUrl)
     deleteDataInSolr(iannSolrUrl)
     pushToIannSolr(docs,iannSolrUrl)
-    logger.info('Finishing to push data to IANN solr')
+    logger.info('Finished to push data to IANN solr')
 
 
 
