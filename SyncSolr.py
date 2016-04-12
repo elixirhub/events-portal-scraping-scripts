@@ -4,6 +4,7 @@ import csv
 import urllib2
 import pysolr
 import logging
+import sys
 
 def logger():
     """
@@ -35,7 +36,6 @@ def logger():
 
 
 def init(csvUrl,iannSolrUrl):
-
     logger()
     logger.info('Starting to push data from a url of CSV file to IANN solr')
     syncSolr(csvUrl,iannSolrUrl)
@@ -95,8 +95,14 @@ def pushToIannSolr(docs,iannSolrUrl):
 
 
 
+if len(sys.argv) == 3:
+    args = str(sys.argv)
+    init(
+        init(args[1],args[2])
+    )
+else:
+    init(
+        "http://139.162.217.53:8983/solr/eventsportal/select?q=*:*&fl=eventId,name,alternateName,startDate,endDate,description,eventType,keywords,topic,locationName,locationCity,locationCountry,locationPostcode,url,&rows=2147483647&wt=csv",
+        "http://localhost:8982/solr/iann"
+    )
 
-init(
-    "http://139.162.217.53:8983/solr/eventsportal/select?q=*:*&fl=eventId,name,alternateName,startDate,endDate,description,eventType,keywords,topic,locationName,locationCity,locationCountry,locationPostcode,url,&rows=2147483647&wt=csv",
-    "http://localhost:8982/solr/iann"
-)
