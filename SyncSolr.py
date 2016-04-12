@@ -99,8 +99,6 @@ if len(sys.argv) == 3:
     args = sys.argv
     init(args[1],args[2])
 else:
-    logger()
-    logger.info("OPT 2")
     init(
         "http://139.162.217.53:8983/solr/eventsportal/select?q=*:*&fl=eventId,name,alternateName,startDate,endDate,description,eventType,keywords,topic,locationName,locationCity,locationCountry,locationPostcode,url,&rows=2147483647&wt=csv",
         "http://localhost:8982/solr/iann"
