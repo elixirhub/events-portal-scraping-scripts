@@ -34,19 +34,19 @@ def logger():
     logger.addHandler(fh)
 
 
-def init(csvUrl):
+def init(csvUrl,iannSolrUrl):
 
     logger()
     logger.info('Starting to push data from a url of CSV file to IANN solr')
-    syncSolr(csvUrl)
+    syncSolr(csvUrl,iannSolrUrl)
 
-def syncSolr(csvUrl):
+def syncSolr(csvUrl,iannSolrUrl):
 
     # logger.info('Starting crawling data')
     getDataFromCsv(csvUrl)
     docs = getDataFromCsv(csvUrl)
-    deleteDataInSolr()
-    pushToIannSolr(docs)
+    deleteDataInSolr(iannSolrUrl)
+    pushToIannSolr(docs,iannSolrUrl)
     logger.info('Finishing to push data to IANN solr')
 
 
@@ -72,22 +72,22 @@ def getDataFromCsv(csvUrl):
            data.append(drowRemoveEmptyValue)
 
     return data
-def deleteDataInSolr():
+def deleteDataInSolr(iannSolrUrl):
     """
     delete all the Solr data
     """
-    solrUrl = 'http://localhost:8982/solr/iann'
-    solr = pysolr.Solr(solrUrl, timeout=10)
+    # solrUrl = 'http://localhost:8982/solr/iann'
+    solr = pysolr.Solr(iannSolrUrl, timeout=10)
     query = '*:*'
     solr.delete(q='%s' % query)
 
 
 
-def pushToIannSolr(docs):
+def pushToIannSolr(docs,iannSolrUrl):
     """
     Adds data to Iann SOLR from a SOLR data structure
     """
-    solr = pysolr.Solr('http://localhost:8982/solr/iann', timeout=10)
+    solr = pysolr.Solr(iannSolrUrl, timeout=10)
 
     solr.add(
         docs
@@ -96,4 +96,7 @@ def pushToIannSolr(docs):
 
 
 
-init("http://139.162.217.53:8983/solr/eventsportal/select?q=*:*&fl=eventId,name,alternateName,startDate,endDate,description,eventType,keywords,topic,locationName,locationCity,locationCountry,locationPostcode,url,&rows=2147483647&wt=csv")
+init(
+    "http://139.162.217.53:8983/solr/eventsportal/select?q=*:*&fl=eventId,name,alternateName,startDate,endDate,description,eventType,keywords,topic,locationName,locationCity,locationCountry,locationPostcode,url,&rows=2147483647&wt=csv",
+    "http://localhost:8982/solr/iann"
+)
