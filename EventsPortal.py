@@ -50,7 +50,7 @@ def init():
     logger()
     logger.info('Connecting to the URL of the Events portal')
 
-def addDataToSolrFromUrl(sourceUrl,patternUrl):
+def addDataToSolrFromUrl(sourceUrl,patternUrl,solrUrl):
     """
     add data to a Solr index crawling events from a URL
     """
@@ -61,7 +61,7 @@ def addDataToSolrFromUrl(sourceUrl,patternUrl):
         allNextEventsUrls = getAllNextEventsUrls(paginationUrls, patternUrl)
         allEventsUrls = set(currentEventsUrls + allNextEventsUrls)
         data = getEventData(allEventsUrls, sourceUrl)
-        addDataToSolr(data)
+        addDataToSolr(data,solrUrl)
     except Exception as e:
         logger.error('Can not update Solr')
 
@@ -247,7 +247,7 @@ def getEventData(allEventsUrls,sourceUrl):
                field["locationName"] = locationName.text
             if locationStreet != None:
                field["locationStreet"] = locationStreet.text
-            field["locationCity"] = locationCity.text
+            field["locationCity"] = locationCity.text.strip()
             field["locationCountry"] = locationCountry.text
             if locationPostcode != None:
                field["locationPostcode"] = locationPostcode.text
@@ -259,25 +259,25 @@ def getEventData(allEventsUrls,sourceUrl):
     return fields
 
 
-def addDataToSolr(docs):
+def addDataToSolr(docs,solrUrl):
     """
     Adds data to a SOLR from a SOLR data structure (documents)
     """
     # solrUrl = 'http://localhost:8984/solr/event_portal'
-    solrUrl = 'http://139.162.217.53:8983/solr/eventsportal'
+    # solrUrl = 'http://139.162.217.53:8983/solr/eventsportal'
     solr = pysolr.Solr(solrUrl, timeout=10)
     solr.add(
         docs
             )
 
-def deleteDataInSolr():
+def deleteDataInSolr(solrUrl):
     """
     delete all the Solr data
     """
     logger.info('Deleting ALL data in SOLR')
     try:
         # solrUrl = 'http://localhost:8984/solr/event_portal'
-        solrUrl = 'http://139.162.217.53:8983/solr/eventsportal'
+        # solrUrl = 'http://139.162.217.53:8983/solr/eventsportal'
         solr = pysolr.Solr(solrUrl, timeout=10)
         query = '*:*'
         solr.delete(q='%s' % query)
@@ -285,11 +285,11 @@ def deleteDataInSolr():
     except:
         logger.error('Error:Cannot delete data in solr ' + solrUrl)
 
-def deleteDataInSolrByQuery(query):
+def deleteDataInSolrByQuery(query,solrUrl):
     """
       delete all the SOLR data using a LUCENE query
     """
-    solrUrl = 'http://localhost:8984/solr/event_portal'
+    # solrUrl = 'http://localhost:8984/solr/event_portal'
     solr = pysolr.Solr(solrUrl, timeout=10)
     solr.delete(q='%s' % query)
     logger.info('deleting sourceUrl objects from solr index: "%s"', query)
