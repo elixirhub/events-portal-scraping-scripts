@@ -64,7 +64,7 @@ def getDataFromCsv(csvUrl):
 
     # create the new header
     header = ['id', 'title', 'subtitle', 'start', 'end', 'description',
-              'category', 'keyword', 'field', 'venue', 'city', 'country', 'postcode',
+              'category', 'keyword', 'field', 'venue', 'city', 'country', 'postcode', 'provider',
               'link']
     data = []
     for column in csvReader:
@@ -126,7 +126,7 @@ if len(sys.argv) == 3:
     init(args[1],args[2])
 else:
     init(
-        "http://139.162.217.53:8983/solr/eventsportal/select?q=*:*&fl=eventId,name,alternateName,startDate,endDate,description,eventType,keywords,topic,locationName,locationCity,locationCountry,locationPostcode,url,&rows=10&wt=csv",
+        "http://139.162.217.53:8983/solr/eventsportal/select?q=*:*&fl=eventId,name,alternateName,startDate,endDate,description,eventType,keywords,topic,locationName,locationCity,locationCountry,locationPostcode,url,&rows=2147483647&wt=csv",
         "http://localhost:8982/solr/iann"
     )
 
