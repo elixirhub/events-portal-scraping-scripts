@@ -8,9 +8,13 @@ import pysolr
 from apscheduler.schedulers.blocking import BlockingScheduler
 import time
 from urlparse import urlparse
-import urllib
 import arrow
 from httplib import BadStatusLine
+from socket import error as SocketError
+import errno
+import ConfigParser
+
+
 
 
 
@@ -190,6 +194,13 @@ def getEventData(allEventsUrls,sourceUrl):
             html = error.read()
         except BadStatusLine:
             logger.info ("could not fetch %s" % eventUrl)
+        except SocketError as e:
+            if e.errno != errno.ECONNRESET:
+                raise # Not error we are looking for
+            else:# Handle error here.
+                logger.info ("SocketError %s" % eventUrl)
+
+
 
         soup = BeautifulSoup(html,"lxml")
         schema = soup.find_all(typeof="schema:Event sioc:Item foaf:Document")
@@ -270,36 +281,66 @@ def addDataToSolr(docs,solrUrl):
         docs
             )
 
+
+def getSolrAdminUrl(solrUrl):
+
+    # read ConfigFile.properties to get admin username and password
+    user= None
+    passw = None
+    logger.info("Authentication...")
+    try:
+        config = ConfigParser.RawConfigParser()
+        config.read('ConfigFile.properties')
+        usertemp = config.get('AuthenticationSection','solarealm.username') ;
+        passwtemp = config.get('AuthenticationSection','solarealm.password') ;
+        user = usertemp
+        passw = passwtemp
+
+    except Exception as e:
+        logger.info ("authenticated users ")
+
+    # combine two urls
+    solrUrlAuth = "http://%s:%s@" % (user,passw)
+    solrUrlBase = solrUrl
+    solrUrlAdmin = solrUrlAuth + solrUrlBase
+
+    return solrUrlAdmin
+
 def deleteDataInSolr(solrUrl):
     """
     delete all the Solr data
     """
-    logger.info('Deleting ALL data in SOLR')
+    logger.info('start deleting ALL data in SOLR')
     try:
-        # solrUrl = 'http://localhost:8984/solr/event_portal'
-        # solrUrl = 'http://139.162.217.53:8983/solr/eventsportal'
+
         solr = pysolr.Solr(solrUrl, timeout=10)
         query = '*:*'
         solr.delete(q='%s' % query)
-        logger.info('deleting sourceUrl objects from solr index: "%s"', query)
+        logger.info('finished deleting ALL data in SOLR: "%s"', query)
     except:
         logger.error('Error:Cannot delete data in solr ' + solrUrl)
+
+
+
 
 def deleteDataInSolrByQuery(query,solrUrl):
     """
       delete all the SOLR data using a LUCENE query
     """
-    # solrUrl = 'http://localhost:8984/solr/event_portal'
-    solr = pysolr.Solr(solrUrl, timeout=10)
+
+    logger.info('start deleting data by query : %s', query)
+    solrUrlAdmin = getSolrAdminUrl(solrUrl)
+
+    solr = pysolr.Solr(solrUrlAdmin, timeout=10)
     solr.delete(q='%s' % query)
-    logger.info('deleting sourceUrl objects from solr index: "%s"', query)
+    logger.info('Finished deleting data by query :%s', query)
 
 
 def deleteDataInSolrFromUrl(sourceUrl):
     """
       delete all the SOLR data equal to sourceUrl
     """
-    logger.info('Deleting data in SOLR by sourceUrl')
+    logger.info('start deleting data in SOLR by %s',sourceUrl)
     try:
         splitUrl= re.split('[? &]', sourceUrl)
         sourceUrlSplit = ''
@@ -310,6 +351,7 @@ def deleteDataInSolrFromUrl(sourceUrl):
         sourceUrlSplit = sourceUrlSplit[:-len(_and)]
         query = 'source:(%s)' %sourceUrlSplit
         deleteDataInSolrByQuery(query)
+        logger.info('finished deleting data in SOLR by %s', sourceUrl)
     except:
         logger.error('Error:Cannot delete data in solr ')
 
