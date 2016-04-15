@@ -72,9 +72,22 @@ def getDataFromCsv(csvUrl):
 
            drow = dict(zip(header, column))
 
+           # transfer different values
+           if drow['category'] == 'Receptions and networking':
+               drow['category'] = "meeting"
+
+           elif drow['category']== 'Meetings and conferences':
+               drow['category'] = 'meeting'
+
+           elif drow['category']=='Awards and prizegivings':
+               drow['category'] ='meeting'
+           else:
+               drow['category'] ='course'
+
+
            # insert value events into category
            categoryValue = drow['category']
-           listCategories = [categoryValue,"event"]
+           listCategories = [categoryValue, "event"]
            drow['category'] = listCategories
 
            # remove the keys with the empty values
