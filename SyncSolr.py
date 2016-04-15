@@ -74,7 +74,7 @@ def getDataFromCsv(csvUrl):
 
            # insert value events into category
            categoryValue = drow['category']
-           listCategories = [categoryValue,"events"]
+           listCategories = [categoryValue,"event"]
            drow['category'] = listCategories
 
            # remove the keys with the empty values
