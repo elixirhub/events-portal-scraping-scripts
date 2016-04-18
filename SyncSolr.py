@@ -6,6 +6,7 @@ import pysolr
 import logging
 import sys
 
+
 def logger():
     """
        Function that initialises logging system
@@ -84,11 +85,17 @@ def getDataFromCsv(csvUrl):
            else:
                drow['category'] ='course'
 
+           # replace slash  to none in keyword string
+           keywordValue = drow['keyword']
+           listKeywordValue = keywordValue.replace('\\,',',')
+           drow['keyword'] = listKeywordValue
 
            # insert value events into category
            categoryValue = drow['category']
            listCategories = [categoryValue, "event"]
            drow['category'] = listCategories
+
+
 
            # remove the keys with the empty values
            drowRemoveEmptyValue = dict((k, v) for k, v in drow.iteritems() if v)
