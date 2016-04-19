@@ -221,13 +221,14 @@ def getEventData(allEventsUrls,sourceUrl):
             contactEmail = soup.find(property="schema:email")
 
 
-
             locationName = soup.find('span', {'itemprop' : 'name'})
             locationStreet = soup.find('span', {'itemprop' : 'streetAddress'})
             locationCity = soup.find('span',  {'itemprop': 'addressLocality'})
             locationCountry = soup.find(itemprop= "addressCountry")
             locationPostcode = soup.find('span', {'itemprop': 'postalCode'})
             # locationStreet = soup.find(itemprop="streetAddress")
+            latitude = soup.find('abbr', {'class': 'latitude'})
+            longitude = soup.find('abbr', {'class': 'longitude'})
 
             field = {}
             field["eventId"] = id.text
@@ -262,6 +263,10 @@ def getEventData(allEventsUrls,sourceUrl):
             field["locationCountry"] = locationCountry.text
             if locationPostcode != None:
                field["locationPostcode"] = locationPostcode.text
+            if latitude != None:
+                field['latitude']= latitude['title']
+            if longitude != None:
+                field['longitude']= latitude['title']
 
 
             field["source"]= sourceUrl
@@ -319,8 +324,6 @@ def deleteDataInSolr(solrUrl):
         logger.info('finished deleting ALL data in SOLR: "%s"', query)
     except:
         logger.error('Error:Cannot delete data in solr ' + solrUrl)
-
-
 
 
 def deleteDataInSolrByQuery(query,solrUrl):
