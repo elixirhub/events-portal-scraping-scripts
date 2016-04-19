@@ -266,7 +266,7 @@ def getEventData(allEventsUrls,sourceUrl):
             if latitude != None:
                 field['latitude']= latitude['title']
             if longitude != None:
-                field['longitude']= latitude['title']
+                field['longitude']= longitude['title']
 
 
             field["source"]= sourceUrl
