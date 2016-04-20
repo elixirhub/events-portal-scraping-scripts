@@ -279,9 +279,9 @@ def addDataToSolr(docs,solrUrl):
     """
     Adds data to a SOLR from a SOLR data structure (documents)
     """
-    # solrUrl = 'http://localhost:8984/solr/event_portal'
-    # solrUrl = 'http://139.162.217.53:8983/solr/eventsportal'
-    solr = pysolr.Solr(solrUrl, timeout=10)
+
+    solrUrlAdmin = getSolrAdminUrl(solrUrl)
+    solr = pysolr.Solr(solrUrlAdmin, timeout=10)
     solr.add(
         docs
             )
@@ -296,8 +296,8 @@ def getSolrAdminUrl(solrUrl):
     try:
         config = ConfigParser.RawConfigParser()
         config.read('ConfigFile.properties')
-        usertemp = config.get('AuthenticationSection','solarealm.username') ;
-        passwtemp = config.get('AuthenticationSection','solarealm.password') ;
+        usertemp = config.get('AuthenticationSection','solarealm.username')
+        passwtemp = config.get('AuthenticationSection','solarealm.password')
         user = usertemp
         passw = passwtemp
 
@@ -317,8 +317,8 @@ def deleteDataInSolr(solrUrl):
     """
     logger.info('start deleting ALL data in SOLR')
     try:
-
-        solr = pysolr.Solr(solrUrl, timeout=10)
+        solrUrlAdmin = getSolrAdminUrl(solrUrl)
+        solr = pysolr.Solr(solrUrlAdmin, timeout=10)
         query = '*:*'
         solr.delete(q='%s' % query)
         logger.info('finished deleting ALL data in SOLR: "%s"', query)
@@ -339,7 +339,7 @@ def deleteDataInSolrByQuery(query,solrUrl):
     logger.info('Finished deleting data by query :%s', query)
 
 
-def deleteDataInSolrFromUrl(sourceUrl):
+def deleteDataInSolrFromUrl(sourceUrl,solrUrl):
     """
       delete all the SOLR data equal to sourceUrl
     """
@@ -353,7 +353,7 @@ def deleteDataInSolrFromUrl(sourceUrl):
             sourceUrlSplit += _and
         sourceUrlSplit = sourceUrlSplit[:-len(_and)]
         query = 'source:(%s)' %sourceUrlSplit
-        deleteDataInSolrByQuery(query)
+        deleteDataInSolrByQuery(query,solrUrl)
         logger.info('finished deleting data in SOLR by %s', sourceUrl)
     except:
         logger.error('Error:Cannot delete data in solr ')
