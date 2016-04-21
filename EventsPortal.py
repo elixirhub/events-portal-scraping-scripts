@@ -58,6 +58,7 @@ def addDataToSolrFromUrl(sourceUrl,patternUrl,solrUrl):
     """
     logger.info('Add data to a Solr index crawling events from a URl "%s"', sourceUrl)
     try:
+        logger.info('0')
         currentEventsUrls = getEventsUrls(sourceUrl, patternUrl)
 
         logger.info('1')
