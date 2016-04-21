@@ -5,8 +5,6 @@ from urlparse import urljoin
 import re
 import logging
 import pysolr
-from apscheduler.schedulers.blocking import BlockingScheduler
-import time
 from urlparse import urlparse
 import arrow
 from httplib import BadStatusLine
@@ -358,23 +356,6 @@ def deleteDataInSolrFromUrl(sourceUrl,solrUrl):
     except:
         logger.error('Error:Cannot delete data in solr ')
 
-# def scheduleUpdateSolr(url):
-#     """
-#        Schedule the updataSolr() function to make it running every on hour.
-#     """
-#     logger.info('***Starting update every minute***')
-#     sched = BlockingScheduler()
-#     sched.add_job(updateSolr, 'interval', minutes=1, args=[url])
-#     sched.start()
-#     try:
-#         # Keeps the main thread alive.
-#         while True:
-#             time.sleep(2)
-#     except (KeyboardInterrupt, SystemExit):
-#         pass
-#         # logger.info('Stopping update')
-#         # sched.shutdown()
-#         #To shut down the scheduler
 
 init()
 
