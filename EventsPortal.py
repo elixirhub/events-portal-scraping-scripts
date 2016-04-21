@@ -59,11 +59,20 @@ def addDataToSolrFromUrl(sourceUrl,patternUrl,solrUrl):
     logger.info('Add data to a Solr index crawling events from a URl "%s"', sourceUrl)
     try:
         currentEventsUrls = getEventsUrls(sourceUrl, patternUrl)
+
+        logger.info('1')
         paginationUrls = getPaginationUrls(currentEventsUrls)
+        logger.info('2')
         allNextEventsUrls = getAllNextEventsUrls(paginationUrls, patternUrl)
+        logger.info('3')
         allEventsUrls = set(currentEventsUrls + allNextEventsUrls)
+        logger.info('4')
         data = getEventData(allEventsUrls, sourceUrl)
+        logger.info('5')
+
         addDataToSolr(data,solrUrl)
+
+        logger.info('6')
     except Exception as e:
         logger.error('Can not update Solr')
 
