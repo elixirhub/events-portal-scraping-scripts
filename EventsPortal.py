@@ -83,7 +83,7 @@ def addDataToSolrFromUrl(sourceUrl,patternUrl,solrUrl):
         addDataToSolr(data, solrUrl)
     except Exception as e:
 
-        logger.error('Can not update Solr')
+        logger.error('Can not update Solr \n%s' % str(sys.exc_info()))
 
 def getAllEventsData(sourceUrl,patternUrl):
     """
@@ -98,7 +98,7 @@ def getAllEventsData(sourceUrl,patternUrl):
         data = getEventData(allEventsUrls, sourceUrl)
 
     except Exception as e:
-        logger.error('Can not crawling')
+        logger.error('Can not crawling \n%s' %str(sys.exc_info()))
 
     return data
 
@@ -324,7 +324,7 @@ def getSolrAdminUrl(solrUrl):
         passw = passwtemp
 
     except Exception as e:
-        logger.info ("unauthenticated users ")
+        logger.info ("unauthenticated users \n%s"%str(sys.exc_info()))
 
     # combine two urls
     solrUrlAuth = "http://%s:%s@" % (user,passw)
@@ -345,7 +345,7 @@ def deleteDataInSolr(solrUrl):
         solr.delete(q='%s' % query)
         logger.info('finished deleting ALL data in SOLR: "%s"', query)
     except:
-        logger.error('Error:Cannot delete data in solr ' + solrUrl)
+        logger.error('Error:Cannot delete data in solr %s \n%s' % (solrUrl, str(sys.exc_info()) ) )
 
 
 def deleteDataInSolrByQuery(query,solrUrl):
