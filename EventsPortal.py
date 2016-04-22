@@ -127,7 +127,6 @@ def getEventsUrls(sourceUrl,patternUrl):
     baseUrl = '{uri.scheme}://{uri.netloc}/'.format(uri=parsedUrl)
     pathUrl = urlparse(patternUrl).path
 
-    logger.info(pathUrl)
 
     # find all links tag in html and get url,convert the path from relative to absolute
     soup = BeautifulSoup(html, "lxml")
@@ -138,7 +137,6 @@ def getEventsUrls(sourceUrl,patternUrl):
     if soup.find_all('a', href=re.compile(pathUrl)) != None:
         links = soup.find_all('a', href=re.compile(pathUrl))
 
-        logger.info(links)
 
         # results = []
         for row in links:
@@ -301,12 +299,16 @@ def addDataToSolr(docs,solrUrl):
     """
     Adds data to a SOLR from a SOLR data structure (documents)
     """
+    try:
+        solrUrlAdmin = getSolrAdminUrl(solrUrl)
+        solr = pysolr.Solr(solrUrlAdmin, timeout=10)
+        solr.add(
+            docs
+                )
+    except Exception as e:
 
-    solrUrlAdmin = getSolrAdminUrl(solrUrl)
-    solr = pysolr.Solr(solrUrlAdmin, timeout=10)
-    solr.add(
-        docs
-            )
+        logger.error('Can not add data to Solr \n%s' % str(sys.exc_info()))
+
 
 
 def getSolrAdminUrl(solrUrl):
