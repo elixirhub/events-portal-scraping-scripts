@@ -120,7 +120,7 @@ def getEventsUrls(sourceUrl,patternUrl):
     root = urllib2.urlopen(sourceUrl)
     html = root.read()
 
-
+    logger.info(html)
     # extract the base url form the events portal url
     # get base URL from input string. Use regular expression
 
