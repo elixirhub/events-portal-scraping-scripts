@@ -324,7 +324,7 @@ def getSolrAdminUrl(solrUrl):
         passw = passwtemp
 
     except Exception as e:
-        logger.info ("unauthenticated users \n%s"%str(sys.exc_info()))
+        logger.info("unauthenticated users \n%s" %str(sys.exc_info()))
 
     # combine two urls
     solrUrlAuth = "http://%s:%s@" % (user,passw)
