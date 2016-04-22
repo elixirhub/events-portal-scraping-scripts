@@ -120,6 +120,7 @@ def getEventsUrls(sourceUrl,patternUrl):
     root = urllib2.urlopen(sourceUrl)
     html = root.read()
 
+
     # extract the base url form the events portal url
     # get base URL from input string. Use regular expression
 
@@ -127,10 +128,13 @@ def getEventsUrls(sourceUrl,patternUrl):
     baseUrl = '{uri.scheme}://{uri.netloc}/'.format(uri=parsedUrl)
     pathUrl = urlparse(patternUrl).path
 
+
+
     # find all links tag in html and get url,convert the path from relative to absolute
     soup = BeautifulSoup(html, "lxml")
 
     results = []
+
 
         #start with events/
     if soup.find_all('a', href=re.compile(pathUrl)) != None:
@@ -155,6 +159,9 @@ def getEventsUrls(sourceUrl,patternUrl):
             results.append(linkNew)
      # removing duplicates from results lists and return to resultsNew list
     resultsNew = list(set(results))
+
+    logger.info(resultsNew)
+
     return resultsNew
 
 
