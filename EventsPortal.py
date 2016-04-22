@@ -60,20 +60,36 @@ def addDataToSolrFromUrl(sourceUrl,patternUrl,solrUrl):
     try:
         logger.info('0')
         currentEventsUrls = getEventsUrls(sourceUrl, patternUrl)
-
+    except Exception as e:
+        logger().error('can not get current events url')
+    try:
         logger.info('1')
         paginationUrls = getPaginationUrls(currentEventsUrls)
+    except Exception as e:
+        logger().error('can not get paginaion  events url')
+    try:
         logger.info('2')
         allNextEventsUrls = getAllNextEventsUrls(paginationUrls, patternUrl)
+    except Exception as e:
+
+        logger().error('can not get all next events url')
+    try:
         logger.info('3')
         allEventsUrls = set(currentEventsUrls + allNextEventsUrls)
+
+    except Exception as e:
+
+        logger().error('can not get all events url')
+    try:
         logger.info('4')
         data = getEventData(allEventsUrls, sourceUrl)
+    except Exception as e:
+
+        logger().error('can not get data')
+    try:
         logger.info('5')
 
         addDataToSolr(data,solrUrl)
-
-        logger.info('6')
     except Exception as e:
         logger.error('Can not update Solr')
 
