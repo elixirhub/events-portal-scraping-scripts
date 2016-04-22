@@ -143,11 +143,7 @@ def getEventsUrls(sourceUrl,patternUrl):
         # results = []
         for row in links:
             link = row.get('href')
-
-            logger.info(link)
             linkNew =urljoin(baseUrl, link)
-
-            logger.info(linkNew)
             results.append(linkNew)
         # start with http:"localhost/events" (patternUrl)
     elif soup.find_all('a', href=re.compile(patternUrl)) != None:
@@ -163,13 +159,7 @@ def getEventsUrls(sourceUrl,patternUrl):
             linkNew =urljoin(baseUrl, link)
             results.append(linkNew)
      # removing duplicates from results lists and return to resultsNew list
-
-
-
-
     resultsNew = list(set(results))
-
-
 
     return resultsNew
 
