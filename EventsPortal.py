@@ -62,7 +62,7 @@ def addDataToSolrFromUrl(sourceUrl,patternUrl,solrUrl):
         currentEventsUrls = getEventsUrls(sourceUrl, patternUrl)
     except Exception as e:
 
-        logger.error('Can not update Solr')
+        logger.error('Can not get current events urls')
     try:
 
         logger.info('1')
