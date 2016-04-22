@@ -58,32 +58,36 @@ def addDataToSolrFromUrl(sourceUrl,patternUrl,solrUrl):
     """
     logger.info('Add data to a Solr index crawling events from a URl "%s"', sourceUrl)
     try:
-        logger.info('0')
         currentEventsUrls = getEventsUrls(sourceUrl, patternUrl)
     except Exception as e:
-
         logger.error('Can not get current events urls: \n%s'%str(sys.exc_info()))
+
     try:
-
-        logger.info('1')
         paginationUrls = getPaginationUrls(currentEventsUrls)
+    except Exception as e:
+        logger.error('Can not get current pagination urls: \n%s'%str(sys.exc_info()))
 
-        logger.info('2')
+    try:
         allNextEventsUrls = getAllNextEventsUrls(paginationUrls, patternUrl)
+    except Exception as e:
+       logger.error('Can not get all next pages events urls: \n%s'%str(sys.exc_info()))
 
-
-        logger.info('3')
+    try:
         allEventsUrls = set(currentEventsUrls + allNextEventsUrls)
+    except Exception as e:
+        logger.error('Can not get all events urls: \n%s'%str(sys.exc_info()))
 
-        logger.info('4')
+    try:
         data = getEventData(allEventsUrls, sourceUrl)
+    except Exception as e:
+        logger.error('Can not get data from urls : \n%s'%str(sys.exc_info()))
 
-        logger.info('5')
-
+    try:
         addDataToSolr(data, solrUrl)
     except Exception as e:
+        logger.error('Can not add data to solr  \n%s' % str(sys.exc_info()))
 
-        logger.error('Can not update Solr \n%s' % str(sys.exc_info()))
+    logger.info('Finished crawling events from a URl "%s"', sourceUrl)
 
 def getAllEventsData(sourceUrl,patternUrl):
     """
