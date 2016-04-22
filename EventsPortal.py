@@ -11,7 +11,7 @@ from httplib import BadStatusLine
 from socket import error as SocketError
 import errno
 import ConfigParser
-
+import sys
 
 
 
@@ -62,7 +62,7 @@ def addDataToSolrFromUrl(sourceUrl,patternUrl,solrUrl):
         currentEventsUrls = getEventsUrls(sourceUrl, patternUrl)
     except Exception as e:
 
-        logger.error('Can not get current events urls')
+        logger.error('Can not get current events urls: \n%s'%str(sys.exc_info()))
     try:
 
         logger.info('1')
