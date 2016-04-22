@@ -301,6 +301,8 @@ def addDataToSolr(docs,solrUrl):
     """
     try:
         solrUrlAdmin = getSolrAdminUrl(solrUrl)
+
+        logger.info(solrUrlAdmin)
         solr = pysolr.Solr(solrUrlAdmin, timeout=10)
         solr.add(
             docs
