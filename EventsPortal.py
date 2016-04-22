@@ -128,10 +128,12 @@ def getEventsUrls(sourceUrl,patternUrl):
     baseUrl = '{uri.scheme}://{uri.netloc}/'.format(uri=parsedUrl)
     pathUrl = urlparse(patternUrl).path
 
-
+    logger.info(pathUrl)
 
     # find all links tag in html and get url,convert the path from relative to absolute
     soup = BeautifulSoup(html, "lxml")
+
+    logger.info(soup)
 
     results = []
 
@@ -139,6 +141,8 @@ def getEventsUrls(sourceUrl,patternUrl):
         #start with events/
     if soup.find_all('a', href=re.compile(pathUrl)) != None:
         links = soup.find_all('a', href=re.compile(pathUrl))
+
+        logger.info(links)
         results = []
         for row in links:
             link = row.get('href')
@@ -158,9 +162,13 @@ def getEventsUrls(sourceUrl,patternUrl):
             linkNew =urljoin(baseUrl, link)
             results.append(linkNew)
      # removing duplicates from results lists and return to resultsNew list
+
+    logger.info(results)
+
+
     resultsNew = list(set(results))
 
-    logger.info(resultsNew)
+
 
     return resultsNew
 
