@@ -57,6 +57,25 @@ def addDataToSolrFromUrl(sourceUrl,patternUrl,solrUrl):
     add data to a Solr index crawling events from a URL
     """
     logger.info('Add data to a Solr index crawling events from a URl "%s"', sourceUrl)
+
+    try:
+        data = getAllEventsData(sourceUrl,patternUrl)
+    except Exception as e:
+        logger.error('Can not get data from urls : \n%s'%str(sys.exc_info()))
+
+    try:
+        addDataToSolr(data, solrUrl)
+    except Exception as e:
+        logger.error('Can not add data to solr  \n%s' % str(sys.exc_info()))
+
+    logger.info('Finished adding data from a URl "%s"', sourceUrl)
+
+
+def getAllEventsData(sourceUrl,patternUrl):
+    """
+    get all events data crawling from a URL
+    """
+    logger.info('crawling events from a URl "%s"', sourceUrl)
     try:
         currentEventsUrls = getEventsUrls(sourceUrl, patternUrl)
     except Exception as e:
@@ -70,35 +89,15 @@ def addDataToSolrFromUrl(sourceUrl,patternUrl,solrUrl):
     try:
         allNextEventsUrls = getAllNextEventsUrls(paginationUrls, patternUrl)
     except Exception as e:
-       logger.error('Can not get all next pages events urls: \n%s'%str(sys.exc_info()))
+        logger.error('Can not get all next pages events urls: \n%s'%str(sys.exc_info()))
 
     try:
         allEventsUrls = set(currentEventsUrls + allNextEventsUrls)
+
     except Exception as e:
         logger.error('Can not get all events urls: \n%s'%str(sys.exc_info()))
 
     try:
-        data = getEventData(allEventsUrls, sourceUrl)
-    except Exception as e:
-        logger.error('Can not get data from urls : \n%s'%str(sys.exc_info()))
-
-    try:
-        addDataToSolr(data, solrUrl)
-    except Exception as e:
-        logger.error('Can not add data to solr  \n%s' % str(sys.exc_info()))
-
-    logger.info('Finished crawling events from a URl "%s"', sourceUrl)
-
-def getAllEventsData(sourceUrl,patternUrl):
-    """
-    get all events data crawling from a URL
-    """
-    logger.info('crawling events from a URl "%s"', sourceUrl)
-    try:
-        currentEventsUrls = getEventsUrls(sourceUrl, patternUrl)
-        paginationUrls = getPaginationUrls(currentEventsUrls)
-        allNextEventsUrls = getAllNextEventsUrls(paginationUrls, patternUrl)
-        allEventsUrls = set(currentEventsUrls + allNextEventsUrls)
         data = getEventData(allEventsUrls, sourceUrl)
 
     except Exception as e:
@@ -297,7 +296,6 @@ def getEventData(allEventsUrls,sourceUrl):
             fields.append(field.copy())
 
     return fields
-
 
 def addDataToSolr(docs,solrUrl):
     """
