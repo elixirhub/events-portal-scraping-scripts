@@ -60,6 +60,7 @@ def addDataToSolrFromUrl(sourceUrl,patternUrl,solrUrl):
 
     try:
         data = getAllEventsData(sourceUrl,patternUrl)
+
     except Exception as e:
         logger.error('Can not get data from urls : \n%s'%str(sys.exc_info()))
 
@@ -102,6 +103,8 @@ def getAllEventsData(sourceUrl,patternUrl):
 
     except Exception as e:
         logger.error('Can not crawling \n%s' %str(sys.exc_info()))
+
+    logger.info('Finished crawling all events from a URl "%s"', sourceUrl)
 
     return data
 
@@ -301,6 +304,7 @@ def addDataToSolr(docs,solrUrl):
     """
     Adds data to a SOLR from a SOLR data structure (documents)
     """
+    logger.info('start adding data to solr"%s"', solrUrl)
     try:
         solrUrlAdmin = getSolrAdminUrl(solrUrl)
         solr = pysolr.Solr(solrUrlAdmin, timeout=10)
@@ -311,7 +315,7 @@ def addDataToSolr(docs,solrUrl):
 
         logger.error('Can not add data to Solr \n%s' % str(sys.exc_info()))
 
-
+    logger.info('finished adding data to solr"%s"', solrUrl)
 
 def getSolrAdminUrl(solrUrl):
 
