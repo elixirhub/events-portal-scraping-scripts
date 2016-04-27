@@ -134,6 +134,6 @@ if len(sys.argv) == 3:
 else:
     init(
         "http://139.162.217.53:8983/solr/eventsportal/select?q=*:*&fl=eventId,name,alternateName,startDate,endDate,hostInstitution,description,eventType,keywords,topic,locationName,locationCity,locationCountry,locationPostcode,latitude,longitude,url,&rows=2147483647&wt=csv",
-        "http://localhost:8982/solr/iann"
+        "http://iann.pro/solrdev/iann"
     )
 
