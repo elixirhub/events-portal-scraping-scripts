@@ -128,12 +128,19 @@ def pushToIannSolr(docs,iannSolrUrl):
 
 
 
-if len(sys.argv) == 3:
-    args = sys.argv
-    init(args[1],args[2])
-else:
+# if len(sys.argv) == 3:
+#     args = sys.argv
+#     init(args[1],args[2])
+# else:
+#     init(
+#         "http://139.162.217.53:8983/solr/eventsportal/select?q=*:*&fl=eventId,name,alternateName,startDate,endDate,hostInstitution,description,eventType,keywords,topic,locationName,locationCity,locationCountry,locationPostcode,latitude,longitude,url,&rows=2147483647&wt=csv",
+#         "http://iann.pro/solrdev/iann"
+#     )
+
+
+if __name__ == '__main__':
+
     init(
         "http://139.162.217.53:8983/solr/eventsportal/select?q=*:*&fl=eventId,name,alternateName,startDate,endDate,hostInstitution,description,eventType,keywords,topic,locationName,locationCity,locationCountry,locationPostcode,latitude,longitude,url,&rows=2147483647&wt=csv",
         "http://iann.pro/solrdev/iann"
     )
-
