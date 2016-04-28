@@ -53,8 +53,9 @@ if  __name__ == '__main__':
 
     logger.info('start at %s' % datetime.now())
 
-    EventsPortal.addDataToSolrFromUrl("http://bioevents-portal.org/eventsfull/test?state=published&field_type_tid=All",
+    EventsPortal.addDataToSolrFromUrl("http://bioevents-portal.org/eventsfull",
                                       "http://bioevents-portal.org/events",
                                       "139.162.217.53:8983/solr/eventsportal/")
+
 
     logger.info('finish at %s' % datetime.now())
