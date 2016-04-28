@@ -59,6 +59,7 @@ def addDataToSolrFromUrl(sourceUrl,patternUrl,solrUrl):
     logger.info('Add data to a Solr index crawling events from a URl "%s"', sourceUrl)
 
     try:
+        global data
         data = getAllEventsData(sourceUrl,patternUrl)
 
     except Exception as e:
