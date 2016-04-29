@@ -46,7 +46,6 @@ def scheduleUpdateSolr(sourceUrl,patternUrl,solrUrl):
     logger.info('***start updating every hour***')
     sched = BlockingScheduler()
     sched.add_job(EventsPortal.addDataToSolrFromUrl, 'interval', minutes= 5, args=[sourceUrl,patternUrl,solrUrl])
-    logger.info('***Finished updating every hour***')
     sched.start()
 
     try:
@@ -58,7 +57,7 @@ def scheduleUpdateSolr(sourceUrl,patternUrl,solrUrl):
     except (KeyboardInterrupt, SystemExit):
         logger.error('Can not schedule add data to solr  \n%s' % str(sys.exc_info()))
 
-
+    logger.info('***Finished updating every hour***')
 
 if  __name__ == '__main__':
 
