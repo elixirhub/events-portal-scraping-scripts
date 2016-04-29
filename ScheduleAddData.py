@@ -46,12 +46,13 @@ def scheduleUpdateSolr(sourceUrl,patternUrl,solrUrl):
     logger.info('***start updating every hour***')
     sched = BlockingScheduler()
     sched.add_job(EventsPortal.addDataToSolrFromUrl, 'interval', minutes= 5, args=[sourceUrl,patternUrl,solrUrl])
+    logger.info('***Finished updating every hour***')
     sched.start()
 
     try:
         # Keeps the main thread alive.
         while True:
-            logger.info('***Finished updating every hour***')
+
             time.sleep(20)
 
     except (KeyboardInterrupt, SystemExit):
