@@ -16,19 +16,20 @@ import sys
 
 
 
+
 def logger():
     """
        Function that initialises logging system
     """
     global logger
     # create logger with 'event_portal'
-    logger = logging.getLogger('new_portal')
+    logger = logging.getLogger('Eventsportal')
     logger.setLevel(logging.DEBUG)
 
     # specifies the lowest severity that will be dispatched to the appropriate destination
 
     # create file handler which logs even debug messages
-    fh = logging.FileHandler('newportal.log')
+    fh = logging.FileHandler('Eventsportal.log')
     # fh.setLevel(logging.WARN)
 
     # create console handler and set level to debug
@@ -73,6 +74,7 @@ def addDataToSolrFromUrl(sourceUrl,patternUrl,solrUrl):
     logger.info('Finished adding data from a URl "%s"', sourceUrl)
 
 
+
 def getAllEventsData(sourceUrl,patternUrl):
     """
     get all events data crawling from a URL
@@ -110,14 +112,17 @@ def getAllEventsData(sourceUrl,patternUrl):
     return data
 
 
-def updateSolr(sourceUrl,patternUrl):
+def updateSolr(sourceUrl,patternUrl,solrUrl):
     """
        Deletes data from a source URL and updates with new content
     """
-    deleteDataInSolrFromUrl(sourceUrl)
-    addDataToSolrFromUrl(sourceUrl,patternUrl)
-    logger.info('***Finishing update***')
+    try:
 
+        deleteDataInSolrFromUrl(sourceUrl, solrUrl)
+        addDataToSolrFromUrl(sourceUrl, patternUrl, solrUrl)
+        logger.info('***Finished updating***')
+    except Exception as e:
+        logger.error('***Updating failed*** \n%s' % str(sys.exc_info()))
 
 def getEventsUrls(sourceUrl,patternUrl):
     """
