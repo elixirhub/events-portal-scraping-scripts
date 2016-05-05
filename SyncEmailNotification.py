@@ -1,5 +1,7 @@
 __author__ = 'chuqiao'
 
+__author__ = 'chuqiao'
+
 
 import smtplib
 import base64
@@ -9,16 +11,16 @@ from email.MIMEText import MIMEText
 
 
 def viewlog(file):
-    file = open("Eventsportal.log")
+    file = open("syncsolr.log")
     file.seek(0,2)# Go to the end of the file
 
     while True:
         line = file.readline()
 
-        if "***Finished updating***" in line:
-             mailUpdate()
-        elif "***Updating failed***" in line:
-             mailAlert()
+        if "***Finished synchronizing***" in line:
+            mailUpdate()
+        elif "***Synchronize failed***" in line:
+            mailAlert()
 
 
 def mailUpdate():
@@ -28,9 +30,9 @@ def mailUpdate():
     msg = MIMEMultipart()
     msg['From'] = fromaddr
     msg['To'] = toaddr
-    msg['Subject'] = "Events portal scraping update"
+    msg['Subject'] = "Synchronize two SOLRS"
 
-    body = '''Finished updating
+    body = '''Finished synchronizing two solrs
            '''
     msg.attach(MIMEText(body, 'plain'))
     username = 'gongchuqiao'
@@ -51,9 +53,9 @@ def mailAlert():
     msg = MIMEMultipart()
     msg['From'] = fromaddr
     msg['To'] = toaddr
-    msg['Subject'] = "Events portal scraping Alert"
+    msg['Subject'] = "Synchronize two SOLRS failed"
 
-    body = '''Updating failed
+    body = '''Failed to synchronize two SOLRS
            '''
     msg.attach(MIMEText(body, 'plain'))
     username = 'gongchuqiao'
@@ -70,6 +72,6 @@ def mailAlert():
 
 
 if  __name__ == '__main__':
-   viewlog(file)
+    viewlog(file)
 
 
