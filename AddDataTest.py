@@ -16,7 +16,7 @@ def logger():
     # specifies the lowest severity that will be dispatched to the appropriate destination
 
     # create file handler which logs even debug messages
-    fh = logging.FileHandler('adddata.log')
+    fh = logging.FileHandler('adddatatest.log')
     # fh.setLevel(logging.WARN)
 
     # create console handler and set level to debug
