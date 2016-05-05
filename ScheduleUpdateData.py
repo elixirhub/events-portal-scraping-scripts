@@ -68,8 +68,8 @@ if  __name__ == '__main__':
                        # "http://bioevents-portal.org/events/upcoming?state=published&field_type_tid=All",
                        "http://bioevents-portal.org/eventsfull/test?state=published&field_type_tid=All",
                        "http://bioevents-portal.org/events",
-                       # "139.162.217.53:8983/solr/eventsportal/"
-                       "localhost:8983/solr/event_portal"
+                       "139.162.217.53:8983/solr/eventsportal/"
+                       # "localhost:8983/solr/event_portal"
     )
 
     # scheduleUpdateSolr(sys.argv[1],sys.argv[2])
