@@ -38,18 +38,21 @@ def logger():
 
 def init(csvUrl,iannSolrUrl):
     logger()
-    logger.info('Starting to push data from a url of CSV file to IANN solr')
+    logger.info('****Starting synchronizing***')
     syncSolr(csvUrl,iannSolrUrl)
 
 def syncSolr(csvUrl,iannSolrUrl):
 
-    # logger.info('Starting crawling data')
-    getDataFromCsv(csvUrl)
-    docs = getDataFromCsv(csvUrl)
-    deleteDataInSolr(iannSolrUrl)
-    pushToIannSolr(docs,iannSolrUrl)
-    logger.info('Finished to push data to IANN solr')
+    try:
+        logger.info("push data from a url of CSV file to IANN solr")
+        getDataFromCsv(csvUrl)
+        docs = getDataFromCsv(csvUrl)
+        deleteDataInSolr(iannSolrUrl)
+        pushToIannSolr(docs,iannSolrUrl)
+        logger.info('***Finished synchronizing***')
 
+    except Exception as e:
+        logger.error('***Synchronize failed*** \n%s' % str(sys.exc_info()))
 
 
 def getDataFromCsv(csvUrl):
