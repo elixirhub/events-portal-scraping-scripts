@@ -41,9 +41,9 @@ def scheduleUpdateSolr(csvUrl,iannSolrUrl):
 
     """
     logger()
-    logger.info('***Start updating every hour***')
+    logger.info('***Start updating every 12 hours***')
     sched = BlockingScheduler()
-    sched.add_job(SyncSolr.syncSolr, 'interval', hours=12, args=[csvUrl,iannSolrUrl])
+    sched.add_job(SyncSolr.syncSolr, 'interval', minutes = 3, args=[csvUrl,iannSolrUrl])
     sched.start()
     logger.info('***Finished updating every hour***')
     try:
