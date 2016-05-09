@@ -6,6 +6,7 @@ import SyncSolr
 import sys
 
 
+
 def logger():
     """
        Function that initialises logging system
@@ -43,9 +44,10 @@ def scheduleUpdateSolr(csvUrl,iannSolrUrl):
     logger()
     logger.info('***Start updating every 12 hours***')
     sched = BlockingScheduler()
-    sched.add_job(SyncSolr.syncSolr, 'interval', minutes = 3, args=[csvUrl,iannSolrUrl])
+    sched.add_job(SyncSolr.init, 'interval', hours = 12, args=[csvUrl,iannSolrUrl])
     sched.start()
-    logger.info('***Finished updating every hour***')
+    # never goes there
+    logger.info('***Finished updating every 12 hours***')
     try:
         # Keeps the main thread alive.
         while True:
