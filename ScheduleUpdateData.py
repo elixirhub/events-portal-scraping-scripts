@@ -43,7 +43,7 @@ def scheduleUpdateSolr(sourceUrl,patternUrl,solrUrl):
 
     """
     logger()
-    logger.info('***start updating every hour***')
+    logger.info('***Start updating every 12 hours***')
     sched = BlockingScheduler()
     sched.add_job(EventsPortal.updateSolr, 'interval', hours=12, args=[sourceUrl,patternUrl,solrUrl])
     sched.start()
