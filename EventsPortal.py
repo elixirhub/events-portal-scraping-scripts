@@ -225,7 +225,7 @@ def getEventData(allEventsUrls,sourceUrl):
         except urllib2.HTTPError, error:
             html = error.read()
         except BadStatusLine:
-            logger.info ("could not fetch %s" % eventUrl)
+            logger.info ("Could not fetch %s" % eventUrl)
         except SocketError as e:
             if e.errno != errno.ECONNRESET:
                 raise # Not error we are looking for
@@ -310,7 +310,7 @@ def addDataToSolr(docs,solrUrl):
     """
     Adds data to a SOLR from a SOLR data structure (documents)
     """
-    logger.info('start adding data to solr"%s"', solrUrl)
+    logger.info('Start adding data to solr"%s"', solrUrl)
     try:
         solrUrlAdmin = getSolrAdminUrl(solrUrl)
         solr = pysolr.Solr(solrUrlAdmin, timeout=10)
@@ -321,7 +321,7 @@ def addDataToSolr(docs,solrUrl):
 
         logger.error('Can not add data to Solr \n%s' % str(sys.exc_info()))
 
-    logger.info('finished adding data to solr"%s"', solrUrl)
+    logger.info('Finished adding data to solr"%s"', solrUrl)
 
 def getSolrAdminUrl(solrUrl):
 
@@ -379,7 +379,7 @@ def deleteDataInSolrFromUrl(sourceUrl,solrUrl):
     """
       delete all the SOLR data equal to sourceUrl
     """
-    logger.info('start deleting data in SOLR by %s',sourceUrl)
+    logger.info('Start deleting data in SOLR by %s',sourceUrl)
     try:
         splitUrl= re.split('[? &]', sourceUrl)
         sourceUrlSplit = ''
@@ -390,7 +390,7 @@ def deleteDataInSolrFromUrl(sourceUrl,solrUrl):
         sourceUrlSplit = sourceUrlSplit[:-len(_and)]
         query = 'source:(%s)' %sourceUrlSplit
         deleteDataInSolrByQuery(query,solrUrl)
-        logger.info('finished deleting data in SOLR by %s', sourceUrl)
+        logger.info('Finished deleting data in SOLR by %s', sourceUrl)
     except:
         logger.error('Error:Cannot delete data in solr ')
 
