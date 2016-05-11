@@ -1,7 +1,5 @@
 __author__ = 'chuqiao'
 
-__author__ = 'chuqiao'
-
 
 import smtplib
 import base64
