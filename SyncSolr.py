@@ -6,53 +6,58 @@ import pysolr
 import logging
 import sys
 
+logging.basicConfig(filename='syncsolr.log', format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+                    datefmt='%d/%m/%Y %I:%M:%S', filemode='w', level=logging.DEBUG)
 
-def logger():
-    """
-       Function that initialises logging system
-    """
-    global logger
-    # create logger with 'syncsolr'
-    logger = logging.getLogger('syncsolr')
-    logger.setLevel(logging.DEBUG)
-
-    # specifies the lowest severity that will be dispatched to the appropriate destination
-
-    # create file handler which logs even debug messages
-    fh = logging.FileHandler('syncsolr.log')
-    # fh.setLevel(logging.WARN)
-
-    # create console handler and set level to debug
-    ch = logging.StreamHandler()
-    # StreamHandler instances send messages to streams
-    # ch.setLevel(logging.DEBUG)
-
-    # create formatter and add it to the handlers
-    formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
-    fh.setFormatter(formatter)
-    ch.setFormatter(formatter)
-    # add the handlers to the logger
-    logger.addHandler(ch)
-    logger.addHandler(fh)
+# def logger():
+#     """
+#        Function that initialises logging system
+#     """
+#     global logger
+#     # create logger with 'syncsolr'
+#     logger = logging.getLogger('syncsolr')
+#     logger.setLevel(logging.DEBUG)
+#
+#     # specifies the lowest severity that will be dispatched to the appropriate destination
+#
+#     # create file handler which logs even debug messages
+#     fh = logging.FileHandler('syncsolr.log')
+#     # fh.setLevel(logging.WARN)
+#
+#     # create console handler and set level to debug
+#     ch = logging.StreamHandler()
+#     # StreamHandler instances send messages to streams
+#     # ch.setLevel(logging.DEBUG)
+#
+#     # create formatter and add it to the handlers
+#     formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+#     fh.setFormatter(formatter)
+#     ch.setFormatter(formatter)
+#     # add the handlers to the logger
+#     logger.addHandler(ch)
+#     logger.addHandler(fh)
 
 
 def init(csvUrl,iannSolrUrl):
-    logger()
-    logger.info('****Starting synchronizing***')
+    # logger()
+
+    logging.info('****Starting synchronizing***')
     syncSolr(csvUrl,iannSolrUrl)
+
 
 def syncSolr(csvUrl,iannSolrUrl):
 
     try:
-        logger.info("push data from a url of CSV file to IANN solr")
+
+        logging.info("push data from a url of CSV file to IANN solr")
         getDataFromCsv(csvUrl)
         docs = getDataFromCsv(csvUrl)
         deleteDataInSolr(iannSolrUrl)
         pushToIannSolr(docs,iannSolrUrl)
-        logger.info('***Finished synchronizing***')
+        logging.info('***Finished synchronizing***')
 
     except Exception as e:
-        logger.error('***Synchronize failed*** \n%s' % str(sys.exc_info()))
+        logging.error('***Synchronize failed*** \n%s' % str(sys.exc_info()))
 
 
 def getDataFromCsv(csvUrl):
