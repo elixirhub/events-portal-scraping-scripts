@@ -22,8 +22,8 @@ def viewlog(file):
 
 
 def mailUpdate():
-    fromaddr = 'gongchuqiao@gmail.com'
-    toaddr = 'gong@ebi.ac.uk'
+    fromaddr = 'bioeventsportal@gmail.com'
+    toaddr = 'info@bioevents-portal.org'
 
     msg = MIMEMultipart()
     msg['From'] = fromaddr
@@ -34,7 +34,7 @@ def mailUpdate():
            '''
     msg.attach(MIMEText(body, 'plain'))
     username = 'gongchuqiao'
-    password = base64.b64decode('YWJvdXRjaHUxNyo=')
+    password = base64.b64decode('YmlvZXZlbnRzMzIx')
     server = smtplib.SMTP('smtp.gmail.com', 587)
     server.ehlo()
     server.starttls()
@@ -45,8 +45,8 @@ def mailUpdate():
     server.quit()
 
 def mailAlert():
-    fromaddr = 'gongchuqiao@gmail.com'
-    toaddr = 'gong@ebi.ac.uk'
+    fromaddr = 'bioeventsportal@gmail.com'
+    toaddr = 'info@bioevents-portal.org'
 
     msg = MIMEMultipart()
     msg['From'] = fromaddr
@@ -57,7 +57,7 @@ def mailAlert():
            '''
     msg.attach(MIMEText(body, 'plain'))
     username = 'gongchuqiao'
-    password = base64.b64decode('YWJvdXRjaHUxNyo=')
+    password = base64.b64decode('YmlvZXZlbnRzMzIx')
     server = smtplib.SMTP('smtp.gmail.com', 587)
     server.ehlo()
     server.starttls()
