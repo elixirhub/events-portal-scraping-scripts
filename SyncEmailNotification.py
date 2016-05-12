@@ -33,7 +33,7 @@ def mailUpdate():
     body = '''Finished synchronizing two solrs
            '''
     msg.attach(MIMEText(body, 'plain'))
-    username = 'gongchuqiao'
+    username = 'bioeventsportal'
     password = base64.b64decode('YmlvZXZlbnRzMzIx')
     server = smtplib.SMTP('smtp.gmail.com', 587)
     server.ehlo()
@@ -56,7 +56,7 @@ def mailAlert():
     body = '''Failed to synchronize two SOLRS
            '''
     msg.attach(MIMEText(body, 'plain'))
-    username = 'gongchuqiao'
+    username = 'bioeventsportal'
     password = base64.b64decode('YmlvZXZlbnRzMzIx')
     server = smtplib.SMTP('smtp.gmail.com', 587)
     server.ehlo()

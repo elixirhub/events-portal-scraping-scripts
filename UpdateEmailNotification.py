@@ -33,7 +33,7 @@ def mailUpdate():
     body = '''Finished updating new SOLR
            '''
     msg.attach(MIMEText(body, 'plain'))
-    username = 'gongchuqiao'
+    username = 'bioeventsportal'
     password = base64.b64decode('YmlvZXZlbnRzMzIx')
     server = smtplib.SMTP('smtp.gmail.com', 587)
     server.ehlo()
@@ -56,7 +56,7 @@ def mailAlert():
     body = '''Updating new solr failed
            '''
     msg.attach(MIMEText(body, 'plain'))
-    username = 'gongchuqiao'
+    username = 'bioeventsportal'
     password = base64.b64decode('YmlvZXZlbnRzMzIx')
     server = smtplib.SMTP('smtp.gmail.com', 587)
     server.ehlo()
