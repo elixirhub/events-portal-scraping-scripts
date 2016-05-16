@@ -28,9 +28,9 @@ def mailUpdate():
     msg = MIMEMultipart()
     msg['From'] = fromaddr
     msg['To'] = toaddr
-    msg['Subject'] = "Events portal scraping update"
+    msg['Subject'] = "[Update-reports] Events portal update"
 
-    body = '''Finished updating new SOLR
+    body = '''The Bioevents Solr has been updated.
            '''
     msg.attach(MIMEText(body, 'plain'))
     username = 'bioeventsportal'
@@ -51,9 +51,9 @@ def mailAlert():
     msg = MIMEMultipart()
     msg['From'] = fromaddr
     msg['To'] = toaddr
-    msg['Subject'] = "Events portal scraping update failed"
+    msg['Subject'] = "[Update-reports] Events portal update failed"
 
-    body = '''Updating new solr failed
+    body = '''The update for the Bioevents Solr has failed.
            '''
     msg.attach(MIMEText(body, 'plain'))
     username = 'bioeventsportal'

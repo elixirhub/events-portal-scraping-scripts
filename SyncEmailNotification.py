@@ -28,9 +28,9 @@ def mailUpdate():
     msg = MIMEMultipart()
     msg['From'] = fromaddr
     msg['To'] = toaddr
-    msg['Subject'] = "Synchronize two SOLRS"
+    msg['Subject'] = "[Sync-reports] Synchronise two Solrs"
 
-    body = '''Finished synchronizing two solrs
+    body = '''The IAnn Solr is now synchronised with the Bioevents Solr.
            '''
     msg.attach(MIMEText(body, 'plain'))
     username = 'bioeventsportal'
@@ -51,9 +51,9 @@ def mailAlert():
     msg = MIMEMultipart()
     msg['From'] = fromaddr
     msg['To'] = toaddr
-    msg['Subject'] = "Synchronize two SOLRS failed"
+    msg['Subject'] = "[Sync-reports]Synchronise two Solrs failed"
 
-    body = '''Failed to synchronize two SOLRS
+    body = '''The synchronisation of two Solrs failed.
            '''
     msg.attach(MIMEText(body, 'plain'))
     username = 'bioeventsportal'
