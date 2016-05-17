@@ -98,11 +98,17 @@ def getDataFromCsv(csvUrl):
            listKeywordValue = keywordValue.replace('\\,',',')
            drow['keyword'] = listKeywordValue
 
+
+           # replace slash  to none in Venue string
+           venueValue = drow['venue']
+           listVenueValue = venueValue.replace('\\,',',')
+           drow['venue'] = listVenueValue
+
+
            # insert value events into category
            categoryValue = drow['category']
            listCategories = [categoryValue, "event"]
            drow['category'] = listCategories
-
 
 
            # remove the keys with the empty values
