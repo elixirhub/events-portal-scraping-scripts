@@ -5,6 +5,8 @@ import urllib2
 import pysolr
 import logging
 import sys
+reload(sys)
+sys.setdefaultencoding('utf8')
 
 logging.basicConfig(filename='syncsolr.log', format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
                     datefmt='%d/%m/%Y %I:%M:%S', filemode='w', level=logging.DEBUG)
