@@ -242,11 +242,13 @@ def getEventData(allEventsUrls,sourceUrl):
             startDate = soup.find('span', {'property': 'schema:startDate'})
             endDate = soup.find('span', {'property': 'schema:enDate'})
             eventType = soup.find(rel="schema:type")
-            scientificType = soup.find(rel="schema:scientificType")
+            scientificType = soup.findAll(rel="schema:scientificType")
             description = soup.find(property="schema:description")
             url = soup.find( property="schema:url")
             id = soup.find(property="schema:id")
-            keywords = soup.find(rel="schema:keywords")
+            keywords = soup.findAll(rel="schema:keywords")
+
+
             subtitle = soup.find(property="schema:alternateName")
             hostInstitution = soup.find(rel="schema:organization")
             contactName = soup.find(property="schema:contactName")
@@ -271,12 +273,12 @@ def getEventData(allEventsUrls,sourceUrl):
             if eventType != None:
              field["eventType"] = eventType.text
             if scientificType != None:
-             field["topic"] =scientificType.text
+             field["topic"] =[x.text for x in scientificType]
             field["url"] = url.text
             if description != None:
              field["description"] = description.text
             if keywords != None:
-             field["keywords"] = keywords.text
+             field["keywords"] = [x.text for x in keywords]
             if subtitle != None:
               field["alternateName"] = subtitle.text
             if hostInstitution != None:
