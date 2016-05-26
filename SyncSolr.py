@@ -104,9 +104,19 @@ def getDataFromCsv(csvUrl):
 
            # replace slash  to none in keyword string
            keywordValue = drow['keyword']
-           listKeywordValue = keywordValue.replace('\\,',',')
-           drow['keyword'] = listKeywordValue
 
+           listKeywordValue = keywordValue.replace('\\,',',')
+
+           myKeywordlist = listKeywordValue.replace(' ','').split(',')
+           drow['keyword'] = myKeywordlist
+
+
+           fieldValue = drow['field']
+
+           listFieldValue = fieldValue.replace('\\,',',')
+
+           myFieldlist = listFieldValue.replace(' ','').split(',')
+           drow['field'] = myFieldlist
 
            # replace slash  to none in Venue string
            venueValue = drow['venue']
@@ -122,6 +132,7 @@ def getDataFromCsv(csvUrl):
 
            # remove the keys with the empty values
            drowRemoveEmptyValue = dict((k, v) for k, v in drow.iteritems() if v)
+
 
            # add dict to a data list
            data.append(drowRemoveEmptyValue)
@@ -166,5 +177,6 @@ if __name__ == '__main__':
     init(
         "http://139.162.217.53:8983/solr/eventsportal/select?q=*:*&fl=eventId,name,alternateName,startDate,endDate,hostInstitution,description,eventType,keywords,topic,locationName,locationCity,locationCountry,locationPostcode,latitude,longitude,url,&rows=2147483647&wt=csv",
         "http://iann.pro/solr/iann"
+
 
     )
