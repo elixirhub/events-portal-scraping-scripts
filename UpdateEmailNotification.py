@@ -23,7 +23,7 @@ def viewlog(file):
 
 def mailUpdate():
     fromaddr = 'bioeventsportal@gmail.com'
-    toaddr = 'info@bioevents-portal.org'
+    toaddr = 'info@bioevents.pro'
 
     msg = MIMEMultipart()
     msg['From'] = fromaddr
@@ -46,7 +46,7 @@ def mailUpdate():
 
 def mailAlert():
     fromaddr = 'bioeventsportal@gmail.com'
-    toaddr = 'info@bioevents-portal.org'
+    toaddr = 'info@bioevents.pro'
 
     msg = MIMEMultipart()
     msg['From'] = fromaddr
