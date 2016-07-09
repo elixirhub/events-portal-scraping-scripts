@@ -65,9 +65,10 @@ def scheduleUpdateSolr(sourceUrl,patternUrl,solrUrl):
 if  __name__ == '__main__':
 
     scheduleUpdateSolr(
-                       "http://bioevents-portal.org/events/upcoming?state=published&field_type_tid=All",
+                       # "http://bioevents-portal.org/events/upcoming?state=published&field_type_tid=All",
                        # "http://bioevents-portal.org/eventsfull/test?state=published&field_type_tid=All",
-                       "http://bioevents-portal.org/events",
+                       "http://bioevents.pro/events?combine=&state=published&field_type_tid=All",
+                       "http://bioevents.pro/events",
                        "139.162.217.53:8983/solr/eventsportal/"
                        # "localhost:8983/solr/event_portal"
     )
